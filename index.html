@@ -5,10 +5,310 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inmobiliaria PNK</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f2e6d8;
+            background-attachment: fixed;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(112, 91, 70, 0.17) 1.2px, transparent 1.8px),
+                radial-gradient(circle at 70% 30%, rgba(112, 91, 70, 0.15) 1.2px, transparent 1.8px),
+                radial-gradient(circle at 40% 70%, rgba(112, 91, 70, 0.14) 1.1px, transparent 1.7px),
+                radial-gradient(circle at 85% 80%, rgba(112, 91, 70, 0.15) 1.2px, transparent 1.8px),
+                radial-gradient(circle at 10% 60%, rgba(255, 255, 255, 0.3) 1px, transparent 1.6px),
+                radial-gradient(circle at 60% 10%, rgba(255, 255, 255, 0.24) 1px, transparent 1.6px);
+            background-size: 56px 56px, 70px 70px, 62px 62px, 76px 76px, 90px 90px, 96px 96px;
+            background-position: 0 0, 16px 24px, 28px 8px, 44px 36px, 12px 48px, 36px 14px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.55;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(180deg, rgba(112, 91, 70, 0.14) 0px, transparent 2px),
+                linear-gradient(90deg, rgba(112, 91, 70, 0.09) 0px, transparent 2px),
+                repeating-linear-gradient(45deg, rgba(112, 91, 70, 0.07) 0 1px, transparent 1px 8px);
+            background-size: 100% 30px, 30px 100%, 120px 120px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.28;
+        }
+        
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .carousel-container {
+            max-width: 100%;
+            margin: 40px auto;
+        }
+        
+        .carousel-login-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            align-items: flex-start;
+            margin: 40px auto;
+            max-width: 1320px;
+            padding: 0 15px;
+        }
+        
+        .image-only-container {
+            flex: 0 0 420px;
+            width: 420px;
+            display: block;
+        }
+
+        .image-only-container img {
+            width: 100%;
+            height: 460px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .carousel-section {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .carousel-section .carousel,
+        .carousel-section .carousel-inner,
+        .carousel-section .carousel-item {
+            height: 460px;
+        }
+
+        .carousel-section .carousel-item > img {
+            width: 100%;
+            height: 460px;
+            object-fit: cover;
+        }
+
+        .login-section {
+            flex: 0 0 350px;
+            background: rgba(255, 245, 238, 0.95);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            border: 2px solid #E5B0A8;
+        }
+        
+        .navbar-custom {
+            background: linear-gradient(135deg, #FAF0E6 0%, #F5F5DC 50%, #FFF8DC 100%);
+            background-attachment: fixed;
+            border-bottom: 1px solid #D2B48C;
+            position: relative;
+        }
+        
+        .navbar-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                radial-gradient(circle at 70% 60%, rgba(0, 0, 0, 0.01) 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(45deg, transparent 49%, rgba(0, 0, 0, 0.01) 49%, rgba(0, 0, 0, 0.01) 51%, transparent 51%);
+            background-size: 
+                60px 40px,
+                80px 60px,
+                100px 70px,
+                20px 20px;
+            background-position: 
+                0 0,
+                30px 20px,
+                10px 10px,
+                0 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .navbar-custom .navbar-brand,
+        .navbar-custom .navbar-nav .nav-link {
+            position: relative;
+            z-index: 1;
+            color: #8B4513 !important;
+        }
+        
+        .bg-wine {
+            background-color: #722F37 !important;
+        }
+        
+        .btn-wine {
+            background-color: #722F37 !important;
+            border-color: #722F37 !important;
+            color: white !important;
+        }
+        
+        .btn-wine:hover {
+            background-color: #5A1F26 !important;
+            border-color: #5A1F26 !important;
+        }
+
+        .card .card-body {
+            position: relative;
+            padding-bottom: 3.5rem;
+        }
+
+        .card .btn-outline-info {
+            position: absolute;
+            left: 15px;
+            bottom: 15px;
+        }
+
+        .card .btn-primary {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+        }
+        
+        .card-header {
+            background: #722F37 !important;
+            border-bottom: 2px solid #5A1F26;
+        }
+        
+        .form-check-label {
+            font-weight: 500;
+            color: #5a5a5a;
+        }
+        
+        .form-check-input:checked {
+            background-color: #722F37;
+            border-color: #722F37;
+        }
+        
+        .form-select:focus,
+        .form-check-input:focus {
+            border-color: #722F37;
+            box-shadow: 0 0 0 0.2rem rgba(114, 47, 55, 0.25);
+        }
+        
+        .login-option {
+            margin-bottom: 15px;
+        }
+        
+        .login-option button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-propietario {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        .btn-propietario:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+        
+        .btn-gestor {
+            background-color: #198754;
+            color: white;
+        }
+        
+        .btn-gestor:hover {
+            background-color: #157347;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .carousel-login-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .image-only-container {
+                width: 100%;
+                flex: 0 0 auto;
+            }
+
+            .image-only-container img {
+                height: 300px;
+            }
+
+            .carousel-section .carousel,
+            .carousel-section .carousel-inner,
+            .carousel-section .carousel-item,
+            .carousel-section .carousel-item > img {
+                height: 300px;
+            }
+            
+            .login-section {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+        
+        .carousel-caption {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 
+                         -2px -2px 4px rgba(0, 0, 0, 0.8),
+                         2px -2px 4px rgba(0, 0, 0, 0.8),
+                         -2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .carousel-caption h5 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 
+                         -3px -3px 6px rgba(0, 0, 0, 0.9),
+                         3px -3px 6px rgba(0, 0, 0, 0.9),
+                         -3px 3px 6px rgba(0, 0, 0, 0.9);
+        }
+        
+        .carousel-caption p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 
+                         -2px -2px 4px rgba(0, 0, 0, 0.8),
+                         2px -2px 4px rgba(0, 0, 0, 0.8),
+                         -2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
             <div class="container">
                 <a class="navbar-brand fw-bold text-primary" href="#">🏠 Inmobiliaria PNK</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,11 +326,20 @@
                             <a class="nav-link" href="#">Contacto</a>
                         </li>
                     </ul>
+                    <div class="ms-auto d-flex gap-2 align-items-center">
+                        <button class="btn btn-wine btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#registroModal">Registro</button>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div id="carouselExampleDark" class="carousel carousel-dark slide">
+    <div class="carousel-login-wrapper">
+        <div class="image-only-container" aria-label="Espacio para imagen">
+            <img src="img/1234.png" alt="Imagen lateral">
+        </div>
+        <div class="carousel-section">
+            <div id="carouselExampleDark" class="carousel carousel-dark slide">
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
     <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -124,12 +433,144 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+        </div>
+        
+    </div>
 
     <main class="container my-5">
         <section>
-            <h2 class="text-center mb-4">Propiedades en Venta</h2>
-            <div class="row">
-                <div class="col-md-4 mb-4">
+            <!-- Card de Búsqueda de Propiedades -->
+            <div class="card mb-5 shadow-sm">
+                <div class="card-header bg-wine text-white">
+                    <h2 class="h4 mb-0 text-center">🏠 Propiedades en Venta</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Tipo de Propiedad -->
+                        <div class="col-md-4 mb-3">
+                            <h5 class="text-primary mb-3">Tipo de Propiedad</h5>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="casas" id="tipo-casas">
+                                    <label class="form-check-label" for="tipo-casas">
+                                        🏠 Casas
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="departamentos" id="tipo-departamentos">
+                                    <label class="form-check-label" for="tipo-departamentos">
+                                        🏢 Departamentos
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="terrenos" id="tipo-terrenos">
+                                    <label class="form-check-label" for="tipo-terrenos">
+                                        🌱 Terrenos
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ubicación -->
+                        <div class="col-md-4 mb-3">
+                            <h5 class="text-primary mb-3">Ubicación</h5>
+                            <div class="mb-3">
+                                <label for="provincia" class="form-label">Provincia</label>
+                                <select class="form-select" id="provincia">
+                                    <option value="">Seleccionar Provincia</option>
+                                    <option value="santiago">Santiago</option>
+                                    <option value="valparaiso">Valparaíso</option>
+                                    <option value="concepcion">Concepción</option>
+                                    <option value="antofagasta">Antofagasta</option>
+                                    <option value="temuco">Temuco</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comuna" class="form-label">Comuna</label>
+                                <select class="form-select" id="comuna">
+                                    <option value="">Seleccionar Comuna</option>
+                                    <option value="las-condes">Las Condes</option>
+                                    <option value="providencia">Providencia</option>
+                                    <option value="vitacura">Vitacura</option>
+                                    <option value="nunoa">Ñuñoa</option>
+                                    <option value="santiago-centro">Santiago Centro</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sector" class="form-label">Sector</label>
+                                <select class="form-select" id="sector">
+                                    <option value="">Seleccionar Sector</option>
+                                    <option value="milagro">Milagro</option>
+                                    <option value="san-joaquin">San Joaquín</option>
+                                    <option value="el-rosal">El Rosal</option>
+                                    <option value="manquehue">Manquehue</option>
+                                    <option value="lo-barnechea">Lo Barnechea</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Características -->
+                        <div class="col-md-4 mb-3">
+                            <h5 class="text-primary mb-3">Características</h5>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="bodega" id="carac-bodega">
+                                    <label class="form-check-label" for="carac-bodega">
+                                        📦 Bodega
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="estacionamiento" id="carac-estacionamiento">
+                                    <label class="form-check-label" for="carac-estacionamiento">
+                                        🚗 Estacionamiento
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="logia" id="carac-logia">
+                                    <label class="form-check-label" for="carac-logia">
+                                        🏞️ Logia
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="cocina-amoblada" id="carac-cocina">
+                                    <label class="form-check-label" for="carac-cocina">
+                                        🍳 Cocina Amoblada
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="antejardin" id="carac-antejardin">
+                                    <label class="form-check-label" for="carac-antejardin">
+                                        🌸 Antejardín
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="patio-trasero" id="carac-patio">
+                                    <label class="form-check-label" for="carac-patio">
+                                        🌳 Patio Trasero
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="piscina" id="carac-piscina">
+                                    <label class="form-check-label" for="carac-piscina">
+                                        🏊 Piscina
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón de búsqueda -->
+                    <div class="text-center mt-4">
+                        <button class="btn btn-wine btn-lg" onclick="buscarPropiedades()">
+                            🔍 Buscar Propiedades
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados de Propiedades -->
+            <div class="row" id="propiedades-container">
+                <div class="col-md-4 mb-4" id="propiedad-1">
                     <div class="card">
                         <img src="img/casa1.webp" class="card-img-top" alt="Casa 1">
                         <div class="card-body">
@@ -144,11 +585,14 @@
                                 <li>Precio UF: 2,500 UF</li>
                                 <li>Fecha: 01/01/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(1)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-2">
                     <div class="card">
                         <img src="img/casa2.jpg" class="card-img-top" alt="Casa 2">
                         <div class="card-body">
@@ -163,11 +607,14 @@
                                 <li>Precio UF: 2,000 UF</li>
                                 <li>Fecha: 15/02/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(2)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-3">
                     <div class="card">
                         <img src="img/casa3.jpg" class="card-img-top" alt="Casa 3">
                         <div class="card-body">
@@ -182,11 +629,14 @@
                                 <li>Precio UF: 3,750 UF</li>
                                 <li>Fecha: 20/03/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(3)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-4">
                     <div class="card">
                         <img src="img/casa4.jpg" class="card-img-top" alt="Casa 4">
                         <div class="card-body">
@@ -201,11 +651,14 @@
                                 <li>Precio UF: 2,250 UF</li>
                                 <li>Fecha: 10/04/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(4)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-5">
                     <div class="card">
                         <img src="img/casa5.webp" class="card-img-top" alt="Casa 5">
                         <div class="card-body">
@@ -220,11 +673,14 @@
                                 <li>Precio UF: 3,000 UF</li>
                                 <li>Fecha: 05/05/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(5)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-6">
                     <div class="card">
                         <img src="img/casa6.webp" class="card-img-top" alt="Casa 6">
                         <div class="card-body">
@@ -239,11 +695,14 @@
                                 <li>Precio UF: 3,250 UF</li>
                                 <li>Fecha: 12/06/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(6)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-7">
                     <div class="card">
                         <img src="img/casa7.jpg" class="card-img-top" alt="Casa 7">
                         <div class="card-body">
@@ -258,11 +717,14 @@
                                 <li>Precio UF: 2,750 UF</li>
                                 <li>Fecha: 18/07/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(7)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-8">
                     <div class="card">
                         <img src="img/casa8.jpg" class="card-img-top" alt="Casa 8">
                         <div class="card-body">
@@ -277,11 +739,14 @@
                                 <li>Precio UF: 3,500 UF</li>
                                 <li>Fecha: 25/08/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(8)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-9">
                     <div class="card">
                         <img src="img/casa9.webp" class="card-img-top" alt="Casa 9">
                         <div class="card-body">
@@ -296,11 +761,14 @@
                                 <li>Precio UF: 1,750 UF</li>
                                 <li>Fecha: 30/09/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(9)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" id="propiedad-10">
                     <div class="card">
                         <img src="img/casa10.webp" class="card-img-top" alt="Casa 10">
                         <div class="card-body">
@@ -315,11 +783,32 @@
                                 <li>Precio UF: 5,000 UF</li>
                                 <li>Fecha: 10/10/2026</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Solicitar Visita</a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-info btn-sm" onclick="mostrarCaracteristicas(10)">Ver Características</button>
+                                <button class="btn btn-primary" onclick="solicitarVisita()">Solicitar Visita</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Paginación -->
+            <nav aria-label="Paginación de propiedades" class="mt-4">
+                <ul class="pagination justify-content-center" id="paginacion">
+                    <li class="page-item" id="pagina-anterior">
+                        <a class="page-link" href="#" onclick="cambiarPagina(-1)">Anterior</a>
+                    </li>
+                    <li class="page-item active" id="pagina-1">
+                        <a class="page-link" href="#" onclick="irAPagina(1)">1</a>
+                    </li>
+                    <li class="page-item" id="pagina-2">
+                        <a class="page-link" href="#" onclick="irAPagina(2)">2</a>
+                    </li>
+                    <li class="page-item" id="pagina-siguiente">
+                        <a class="page-link" href="#" onclick="cambiarPagina(1)">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
         </section>
     </main>
 
@@ -327,6 +816,528 @@
         
     </footer>
 
+    <!-- Modal de Solicitar Visita -->
+    <div class="modal fade" id="solicitarVisitaModal" tabindex="-1" aria-labelledby="solicitarVisitaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="solicitarVisitaModalLabel">Solicitar Visita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="solicitarVisitaForm">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefono" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mensaje" class="form-label">Mensaje (Opcional)</label>
+                            <textarea class="form-control" id="mensaje" rows="3" placeholder="¿Cuándo le gustaría visitar la propiedad?"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="enviarSolicitud()">Enviar Solicitud</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Características -->
+    <div class="modal fade" id="caracteristicasModal" tabindex="-1" aria-labelledby="caracteristicasModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="caracteristicasModalLabel">Características de la Propiedad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Características Principales:</h6>
+                            <ul class="list-unstyled" id="caracteristicas-list">
+                                <!-- Las características se cargarán dinámicamente -->
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Información Adicional:</h6>
+                            <p id="caracteristicas-info">Esta propiedad cuenta con comodidades modernas y espacios bien distribuidos.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary">Solicitar Visita</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Compartir -->
+    <div class="modal fade" id="compartirModal" tabindex="-1" aria-labelledby="compartirModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="compartirModalLabel">Compartir Propiedad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="shareDescription">Seleccione una red social o copie el enlace.</p>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="shareLinkInput" readonly>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-primary" onclick="compartirEnRed('facebook')">Facebook</button>
+                        <button type="button" class="btn btn-danger" onclick="compartirEnRed('instagram')">Instagram</button>
+                        <button type="button" class="btn btn-success" onclick="compartirEnRed('whatsapp')">WhatsApp</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="copiarEnlace()">Copiar enlace</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Iniciar Sesión -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="enviarLogin()">Entrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Registro -->
+    <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registroModalLabel">Registro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex gap-2 mb-3">
+                        <button type="button" class="btn btn-outline-dark" id="btnRegistroPropietario" onclick="setRolRegistro('propietario')">Propietario</button>
+                        <button type="button" class="btn btn-outline-dark" id="btnRegistroGestor" onclick="setRolRegistro('gestor')">Gestor Inmobiliario</button>
+                    </div>
+                    <div id="registroRoleTitle" class="mb-3 fw-semibold">Seleccione un tipo de registro para continuar.</div>
+                    <form id="registroForm">
+                        <input type="hidden" id="registroRol" value="">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="rutRegistro" class="form-label">Rut</label>
+                                <input type="text" class="form-control" id="rutRegistro" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nombreRegistro" class="form-label">Nombre Completo</label>
+                                <input type="text" class="form-control" id="nombreRegistro" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fechaNacimientoRegistro" class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" id="fechaNacimientoRegistro" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="correoRegistro" class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="correoRegistro" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="contrasenaRegistro" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="contrasenaRegistro" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sexoRegistro" class="form-label">Sexo</label>
+                                <select class="form-select" id="sexoRegistro" required>
+                                    <option value="">Seleccionar</option>
+                                    <option value="femenino">Femenino</option>
+                                    <option value="masculino">Masculino</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefonoRegistro" class="form-label">Teléfono Móvil</label>
+                                <input type="tel" class="form-control" id="telefonoRegistro" required>
+                            </div>
+                            <div class="col-md-6 d-none" id="campoPropiedadRegistroWrapper">
+                                <label for="propiedadRegistro" class="form-label">N° de la propiedad según registro de Bienes Raíces</label>
+                                <input type="text" class="form-control" id="propiedadRegistro">
+                            </div>
+                            <div class="col-md-12 d-none" id="campoCertificadoRegistroWrapper">
+                                <label for="certificadoRegistro" class="form-label">Certificado de Antecedentes</label>
+                                <input type="file" class="form-control" id="certificadoRegistro" accept="application/pdf, image/*">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="enviarRegistro()">Registrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        function mostrarCaracteristicas(propiedadId) {
+            const caracteristicas = {
+                1: ['Bodega', 'Estacionamiento', 'Logia', 'Cocina amoblada'],
+                2: ['Estacionamiento', 'Antejardín', 'Patio trasero'],
+                3: ['Bodega', 'Estacionamiento', 'Logia', 'Cocina amoblada', 'Antejardín', 'Patio trasero', 'Piscina'],
+                4: ['Estacionamiento', 'Logia', 'Cocina amoblada'],
+                5: ['Bodega', 'Estacionamiento', 'Antejardín'],
+                6: ['Estacionamiento', 'Logia', 'Patio trasero'],
+                7: ['Bodega', 'Cocina amoblada', 'Antejardín'],
+                8: ['Estacionamiento', 'Logia', 'Patio trasero', 'Piscina'],
+                9: ['Antejardín', 'Cocina amoblada'],
+                10: ['Bodega', 'Estacionamiento', 'Logia', 'Cocina amoblada', 'Antejardín', 'Patio trasero', 'Piscina']
+            };
+
+            const infoAdicional = {
+                1: 'Esta hermosa casa cuenta con espacios amplios y modernos.',
+                2: 'Propiedad ideal para familias que buscan tranquilidad.',
+                3: 'Casa de lujo con todas las comodidades modernas.',
+                4: 'Excelente opción para parejas jóvenes.',
+                5: 'Casa moderna con diseño contemporáneo.',
+                6: 'Propiedad espaciosa con áreas verdes.',
+                7: 'Casa familiar con distribución funcional.',
+                8: 'Propiedad premium con piscina privada.',
+                9: 'Casa urbana perfecta para profesionales.',
+                10: 'Mansión de lujo con todas las amenidades.'
+            };
+
+            const lista = document.getElementById('caracteristicas-list');
+            const info = document.getElementById('caracteristicas-info');
+            
+            lista.innerHTML = '';
+            caracteristicas[propiedadId].forEach(caracteristica => {
+                const li = document.createElement('li');
+                li.innerHTML = '<i class="text-success">✓</i> ' + caracteristica;
+                li.className = 'mb-2';
+                lista.appendChild(li);
+            });
+
+            info.textContent = infoAdicional[propiedadId];
+
+            const modal = new bootstrap.Modal(document.getElementById('caracteristicasModal'));
+            modal.show();
+        }
+
+        function solicitarVisita() {
+            const modal = new bootstrap.Modal(document.getElementById('solicitarVisitaModal'));
+            modal.show();
+        }
+
+        function buscarPropiedades() {
+            const tiposSeleccionados = [];
+            const caracteristicasSeleccionadas = [];
+            
+            // Obtener tipos seleccionados
+            document.querySelectorAll('input[id^="tipo-"]:checked').forEach(checkbox => {
+                tiposSeleccionados.push(checkbox.value);
+            });
+            
+            // Obtener características seleccionadas
+            document.querySelectorAll('input[id^="carac-"]:checked').forEach(checkbox => {
+                caracteristicasSeleccionadas.push(checkbox.value);
+            });
+            
+            // Obtener ubicación
+            const provincia = document.getElementById('provincia').value;
+            const comuna = document.getElementById('comuna').value;
+            const sector = document.getElementById('sector').value;
+            
+            // Mostrar resumen de búsqueda
+            let mensaje = 'Búsqueda realizada con los siguientes filtros:\n\n';
+            
+            if (tiposSeleccionados.length > 0) {
+                mensaje += `Tipos: ${tiposSeleccionados.join(', ')}\n`;
+            }
+            
+            if (provincia || comuna || sector) {
+                mensaje += `Ubicación: ${provincia || 'Cualquiera'} - ${comuna || 'Cualquiera'} - ${sector || 'Cualquiera'}\n`;
+            }
+            
+            if (caracteristicasSeleccionadas.length > 0) {
+                mensaje += `Características: ${caracteristicasSeleccionadas.join(', ')}\n`;
+            }
+            
+            alert(mensaje || 'No se seleccionaron filtros específicos.');
+        }
+
+        // Variables de paginación
+        let paginaActual = 1;
+        const propiedadesPorPagina = 9;
+        const totalPropiedades = 10;
+        const totalPaginas = Math.ceil(totalPropiedades / propiedadesPorPagina);
+
+        // Función para mostrar propiedades de la página actual
+        function mostrarPropiedades() {
+            for (let i = 1; i <= totalPropiedades; i++) {
+                const propiedad = document.getElementById(`propiedad-${i}`);
+                if (i > (paginaActual - 1) * propiedadesPorPagina && i <= paginaActual * propiedadesPorPagina) {
+                    propiedad.style.display = 'block';
+                } else {
+                    propiedad.style.display = 'none';
+                }
+            }
+            actualizarPaginacion();
+        }
+
+        // Función para actualizar la apariencia de la paginación
+        function actualizarPaginacion() {
+            // Actualizar botones de página
+            for (let i = 1; i <= totalPaginas; i++) {
+                const paginaElement = document.getElementById(`pagina-${i}`);
+                if (i === paginaActual) {
+                    paginaElement.classList.add('active');
+                } else {
+                    paginaElement.classList.remove('active');
+                }
+            }
+
+            // Actualizar botones anterior/siguiente
+            const anterior = document.getElementById('pagina-anterior');
+            const siguiente = document.getElementById('pagina-siguiente');
+
+            if (paginaActual === 1) {
+                anterior.classList.add('disabled');
+            } else {
+                anterior.classList.remove('disabled');
+            }
+
+            if (paginaActual === totalPaginas) {
+                siguiente.classList.add('disabled');
+            } else {
+                siguiente.classList.remove('disabled');
+            }
+        }
+
+        // Función para cambiar de página
+        function cambiarPagina(direccion) {
+            const nuevaPagina = paginaActual + direccion;
+            if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+                paginaActual = nuevaPagina;
+                mostrarPropiedades();
+            }
+        }
+
+        // Función para ir a una página específica
+        function irAPagina(pagina) {
+            if (pagina >= 1 && pagina <= totalPaginas) {
+                paginaActual = pagina;
+                mostrarPropiedades();
+            }
+        }
+
+        // Ubicaciones para cada propiedad (ejemplo Google Maps)
+        const ubicacionesGoogle = {
+            1: 'Milagro 2, Santiago, Chile',
+            2: 'San Joaquín, Santiago, Chile',
+            3: 'El Rosal, Santiago, Chile',
+            4: 'Milagro 2, Santiago, Chile',
+            5: 'Las Condes, Santiago, Chile',
+            6: 'La Reina, Santiago, Chile',
+            7: 'Ñuñoa, Santiago, Chile',
+            8: 'Providencia, Santiago, Chile',
+            9: 'Santiago Centro, Santiago, Chile',
+            10: 'Vitacura, Santiago, Chile'
+        };
+
+        function publicarUbicacion(propiedadId) {
+            const direccion = ubicacionesGoogle[propiedadId] || 'Chile';
+            const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccion)}`;
+            window.open(url, '_blank');
+        }
+
+        function inicializarBotonUbicacion() {
+            for (let i = 1; i <= totalPropiedades; i++) {
+                const propiedadCard = document.getElementById(`propiedad-${i}`);
+                if (!propiedadCard) continue;
+
+                const btnGroup = propiedadCard.querySelector('.d-flex.gap-2');
+                if (!btnGroup) continue;
+
+                if (!btnGroup.querySelector('.btn-ubicacion')) {
+                    const btnUbicacion = document.createElement('button');
+                    btnUbicacion.type = 'button';
+                    btnUbicacion.className = 'btn btn-outline-dark btn-sm btn-ubicacion';
+                    btnUbicacion.textContent = 'Ubicación';
+                    btnUbicacion.addEventListener('click', () => publicarUbicacion(i));
+                    btnGroup.appendChild(btnUbicacion);
+                }
+
+                if (!btnGroup.querySelector('.btn-compartir')) {
+                    const btnCompartir = document.createElement('button');
+                    btnCompartir.type = 'button';
+                    btnCompartir.className = 'btn btn-outline-secondary btn-sm btn-compartir';
+                    btnCompartir.textContent = 'Compartir';
+                    btnCompartir.addEventListener('click', () => abrirCompartir(i));
+                    btnGroup.appendChild(btnCompartir);
+                }
+            }
+        }
+
+        function abrirCompartir(propiedadId) {
+            const direccion = ubicacionesGoogle[propiedadId] || 'Ubicación de la propiedad';
+            const enlace = `${window.location.origin}${window.location.pathname}#propiedad-${propiedadId}`;
+            const inputCompartir = document.getElementById('shareLinkInput');
+            const desc = document.getElementById('shareDescription');
+
+            inputCompartir.value = enlace;
+            desc.textContent = `Compartiendo ubicación de ${direccion}.`;
+
+            const modal = new bootstrap.Modal(document.getElementById('compartirModal'));
+            modal.show();
+        }
+
+        function compartirEnRed(red) {
+            const link = document.getElementById('shareLinkInput').value;
+            let url = '';
+
+            if (red === 'facebook') {
+                url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`;
+            } else if (red === 'instagram') {
+                url = 'https://www.instagram.com/';
+                alert('Instagram no permite compartir enlace directo desde web, se abrirá Instagram.');
+            } else if (red === 'whatsapp') {
+                url = `https://api.whatsapp.com/send?text=${encodeURIComponent('Mira esta propiedad: ' + link)}`;
+            }
+
+            if (url) {
+                window.open(url, '_blank', 'width=600,height=600');
+            }
+        }
+
+        function copiarEnlace() {
+            const enlace = document.getElementById('shareLinkInput');
+            enlace.select();
+            enlace.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(enlace.value).then(() => {
+                alert('Enlace copiado al portapapeles.');
+            });
+        }
+
+        // Inicializar paginación cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            mostrarPropiedades();
+            setRolRegistro('');
+            inicializarBotonUbicacion();
+        });
+
+        function setRolRegistro(rol) {
+            const titulo = document.getElementById('registroRoleTitle');
+            const inputRol = document.getElementById('registroRol');
+            const campoPropiedad = document.getElementById('campoPropiedadRegistroWrapper');
+            const campoCertificado = document.getElementById('campoCertificadoRegistroWrapper');
+
+            inputRol.value = rol;
+
+            if (rol === 'propietario') {
+                titulo.textContent = 'Registro como Propietario';
+                campoPropiedad.classList.remove('d-none');
+                campoCertificado.classList.add('d-none');
+                document.getElementById('btnRegistroPropietario').classList.replace('btn-outline-dark', 'btn-dark');
+                document.getElementById('btnRegistroGestor').classList.replace('btn-dark', 'btn-outline-dark');
+            } else if (rol === 'gestor') {
+                titulo.textContent = 'Registro como Gestor Inmobiliario';
+                campoPropiedad.classList.add('d-none');
+                campoCertificado.classList.remove('d-none');
+                document.getElementById('btnRegistroGestor').classList.replace('btn-outline-dark', 'btn-dark');
+                document.getElementById('btnRegistroPropietario').classList.replace('btn-dark', 'btn-outline-dark');
+            } else {
+                titulo.textContent = 'Seleccione un tipo de registro para continuar.';
+                campoPropiedad.classList.add('d-none');
+                campoCertificado.classList.add('d-none');
+                document.getElementById('btnRegistroPropietario').classList.remove('btn-dark');
+                document.getElementById('btnRegistroPropietario').classList.add('btn-outline-dark');
+                document.getElementById('btnRegistroGestor').classList.remove('btn-dark');
+                document.getElementById('btnRegistroGestor').classList.add('btn-outline-dark');
+            }
+        }
+
+        function enviarLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+
+            if (!email || !pass) {
+                alert('Por favor ingrese correo y contraseña.');
+                return;
+            }
+
+            // Aquí se puede integrar con API real
+            alert(`Iniciar sesión con ${email}`);
+            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            if (loginModal) loginModal.hide();
+            document.getElementById('loginForm').reset();
+        }
+
+        function enviarRegistro() {
+            const rol = document.getElementById('registroRol').value;
+            const rut = document.getElementById('rutRegistro').value.trim();
+            const nombre = document.getElementById('nombreRegistro').value.trim();
+            const nacimiento = document.getElementById('fechaNacimientoRegistro').value;
+            const correo = document.getElementById('correoRegistro').value.trim();
+            const contrasena = document.getElementById('contrasenaRegistro').value.trim();
+            const sexo = document.getElementById('sexoRegistro').value;
+            const telefono = document.getElementById('telefonoRegistro').value.trim();
+            const propiedad = document.getElementById('propiedadRegistro').value.trim();
+            const certificado = document.getElementById('certificadoRegistro').value;
+
+            if (!rol) {
+                alert('Seleccione propietario o gestor antes de continuar.');
+                return;
+            }
+            if (!rut || !nombre || !nacimiento || !correo || !contrasena || !sexo || !telefono) {
+                alert('Complete todos los campos requeridos.');
+                return;
+            }
+
+            if (rol === 'propietario' && !propiedad) {
+                alert('Ingrese el N° de la propiedad según registro de Bienes Raíces.');
+                return;
+            }
+
+            if (rol === 'gestor' && !certificado) {
+                alert('Adjunte el certificado de antecedentes.');
+                return;
+            }
+
+            alert(`Registro exitoso como ${rol}.\nRut: ${rut}\nNombre: ${nombre}`);
+            const registroModal = bootstrap.Modal.getInstance(document.getElementById('registroModal'));
+            if (registroModal) registroModal.hide();
+            document.getElementById('registroForm').reset();
+            setRolRegistro('');
+        }
+    </script>
 </body>
 </html>
