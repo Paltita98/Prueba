@@ -167,6 +167,32 @@
             border-color: #5A1F26 !important;
         }
 
+        .footer-nav-list {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-link,
+        .footer-admin-link {
+            color: #6c757d;
+            text-decoration: none;
+            transition: color 0.2s ease, opacity 0.2s ease;
+        }
+
+        .footer-link:hover,
+        .footer-link:focus,
+        .footer-admin-link:hover,
+        .footer-admin-link:focus {
+            color: #722f37;
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .footer-admin-link {
+            display: inline-block;
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
         .card .card-body {
             position: relative;
             padding-bottom: 3.5rem;
@@ -308,27 +334,28 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
+        <nav class="navbar navbar-expand-lg navbar-light navbar-custom" aria-label="Menú de navegación principal">
             <div class="container">
                 <a class="navbar-brand fw-bold text-primary" href="#">🏠 Inmobiliaria PNK</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Mostrar menú de navegación">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+                            <a class="nav-link active" aria-current="page" href="#inicio">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Acerca de</a>
+                            <a class="nav-link" href="#acerca-de">Acerca de</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Contacto</a>
+                            <a class="nav-link" href="#contacto">Contacto</a>
                         </li>
                     </ul>
                     <div class="ms-auto d-flex gap-2 align-items-center">
-                        <button class="btn btn-wine btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#registroModal">Registro</button>
+                        <button class="btn btn-outline-primary btn-sm" type="button" onclick="abrirRegistro('propietario')">Registrar Propietario</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="abrirRegistro('gestor')">Registrar Gestor Freelance</button>
+                        <button class="btn btn-wine btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
                     </div>
                 </div>
             </div>
@@ -437,7 +464,7 @@
         
     </div>
 
-    <main class="container my-5">
+    <main id="inicio" class="container my-5" aria-label="Contenido principal">
         <section>
             <!-- Card de Búsqueda de Propiedades -->
             <div class="card mb-5 shadow-sm">
@@ -812,8 +839,40 @@
         </section>
     </main>
 
-    <footer class="bg-light text-center py-3">
-        
+    <section id="acerca-de" class="container py-5" aria-labelledby="acerca-de-title">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 id="acerca-de-title" class="h4 mb-3">Acerca de Inmobiliaria PNK</h2>
+                <p>Inmobiliaria PNK es un proyecto de sitio web estático diseñado para facilitar la gestión de propiedades, dueños y publicaciones en el mercado inmobiliario. Nuestro enfoque es brindar una experiencia clara, accesible y moderna en HTML5 y CSS3.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="container py-5" aria-labelledby="contacto-title">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 id="contacto-title" class="h4 mb-3">Contacto</h2>
+                <p>Puedes contactarnos para solicitar información sobre propiedades o soporte para el sitio web.</p>
+                <address>
+                    <strong>Email:</strong> contacto@pnk.cl<br>
+                    <strong>Teléfono:</strong> +56 9 1234 5678
+                </address>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer bg-light text-center py-4">
+        <div class="container">
+            <nav aria-label="Enlaces de pie de página">
+                <ul class="list-inline footer-nav-list mb-2">
+                    <li class="list-inline-item"><a class="footer-link" href="#inicio">Inicio</a></li>
+                    <li class="list-inline-item"><a class="footer-link" href="#acerca-de">Acerca de</a></li>
+                    <li class="list-inline-item"><a class="footer-link" href="#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+            <a href="pagina_admin.html" class="footer-admin-link">Acceso Admin</a>
+            <p class="text-muted small mb-0">© 2026 Inmobiliaria PNK</p>
+        </div>
     </footer>
 
     <!-- Modal de Solicitar Visita -->
@@ -1253,6 +1312,12 @@
             setRolRegistro('');
             inicializarBotonUbicacion();
         });
+
+        function abrirRegistro(rol) {
+            setRolRegistro(rol);
+            const modal = new bootstrap.Modal(document.getElementById('registroModal'));
+            modal.show();
+        }
 
         function setRolRegistro(rol) {
             const titulo = document.getElementById('registroRoleTitle');

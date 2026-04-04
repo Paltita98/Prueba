@@ -1,12 +1,821 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Admin Dashboard - Inmobiliaria PNK</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f5f7;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar-custom {
+            background: #fff5f2;
+            border-bottom: 1px solid #e4d3c9;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-custom .navbar-brand {
+            color: #722f37 !important;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .navbar-custom .nav-link {
+            color: #8B4513 !important;
+            margin: 0 10px;
+        }
+
+        .navbar-custom .nav-link.active {
+            color: #722f37 !important;
+            font-weight: 600;
+            border-bottom: 3px solid #722f37;
+            padding-bottom: 2px;
+        }
+
+        .btn-wine {
+            background-color: #722f37 !important;
+            border-color: #722f37 !important;
+            color: white !important;
+        }
+
+        .btn-wine:hover {
+            background-color: #5a1f26 !important;
+            border-color: #5a1f26 !important;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .sidebar .nav-link {
+            color: #555;
+            padding: 12px 15px;
+            border-radius: 6px;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar .nav-link:hover {
+            background: #f5f5f7;
+            color: #722f37;
+            border-left-color: #722f37;
+        }
+
+        .sidebar .nav-link.active {
+            background: #f0e6e3;
+            color: #722f37;
+            border-left-color: #722f37;
+            font-weight: 600;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #722f37;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 15px;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: #722f37;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            border: none;
+            padding: 15px 20px;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f9f3f1;
+        }
+
+        .badge-owner {
+            background: #0d6efd;
+        }
+
+        .badge-manager {
+            background: #198754;
+        }
+
+        .badge-active {
+            background: #28a745;
+        }
+
+        .badge-inactive {
+            background: #dc3545;
+        }
+
+        .btn-group-sm {
+            gap: 5px;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stats-card h3 {
+            color: #722f37;
+            font-weight: 700;
+            margin: 10px 0 5px;
+        }
+
+        .stats-card p {
+            color: #999;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .modal-header {
+            background: #722f37;
+            color: white;
+            border: none;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .alert-info {
+            background: #e7f3ff;
+            border-color: #b3d9ff;
+            color: #0056b3;
+        }
+
+        .footer-link {
+            color: #6c757d;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover,
+        .footer-link:focus {
+            color: #722f37;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light navbar-custom" aria-label="Barra de navegación del administrador">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html">🏠 Inmobiliaria PNK - Admin</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Mostrar navegación">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Volver al sitio</a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-wine btn-sm" onclick="cerrarSesion()">Cerrar sesión</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="admin-dashboard" class="container-fluid py-4" aria-label="Área principal del administrador">
+        <div class="row">
+            <aside class="col-lg-2" aria-label="Panel de navegación lateral">
+                <div class="profile-card">
+                    <div class="avatar">A</div>
+                    <h5>Admin PNK</h5>
+                    <p class="text-muted mb-3">Administrador</p>
+                    <div class="alert alert-info mb-0" role="alert">
+                        <small>Este usuario tiene acceso completo a todas las funciones del sistema.</small>
+                    </div>
+                </div>
+
+                <nav class="sidebar nav flex-column" aria-label="Navegación del panel administrativo">
+                    <a class="nav-link active" href="#dashboard" onclick="mostrarSeccion('dashboard', event);">
+                        📊 Dashboard
+                    </a>
+                    <a class="nav-link" href="#duenos" onclick="mostrarSeccion('duenos', event);">
+                        👤 Dueños de Inmuebles
+                    </a>
+                    <a class="nav-link" href="#gestores" onclick="mostrarSeccion('gestores', event);">
+                        💼 Gestores Inmobiliarios
+                    </a>
+                    <a class="nav-link" href="#publicaciones" onclick="mostrarSeccion('publicaciones', event);">
+                        📢 Publicaciones de Avisos
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <section class="col-lg-10" aria-labelledby="dashboard-heading">
+                <!-- DASHBOARD -->
+                <section id="dashboard" class="content-section active" aria-labelledby="dashboard-heading">
+                    <h2 id="dashboard-heading" class="visually-hidden">Dashboard administrativo</h2>
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <h3 id="totalDuenos">12</h3>
+                                <p>Dueños de Inmuebles</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <h3 id="totalGestores">8</h3>
+                                <p>Gestores Inmobiliarios</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <h3 id="totalPublicaciones">45</h3>
+                                <p>Publicaciones Activas</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <h3 id="totalUsuarios">20</h3>
+                                <p>Usuarios Activos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Actividad Reciente</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Nuevo Dueño:</strong> Carlos Müller registrado - <span class="text-muted">Hace 2 horas</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Nueva Publicación:</strong> Casa en Providencia - <span class="text-muted">Hace 4 horas</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Gestor Activado:</strong> Andrea Valdez habilitada - <span class="text-muted">Hace 1 día</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Usuario Eliminado:</strong> Dueño "Roberto Silva" dado de baja - <span class="text-muted">Hace 3 días</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GESTIÓN DE DUEÑOS -->
+                <div id="duenos" class="content-section">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-section">
+                                <h5 class="mb-3">Registrar Nuevo Dueño</h5>
+                                <form id="formDueno">
+                                    <div class="mb-3">
+                                        <label for="rutDueno" class="form-label">RUT</label>
+                                        <input type="text" class="form-control" id="rutDueno" placeholder="12.345.678-9" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nombreDueno" class="form-label">Nombre Completo</label>
+                                        <input type="text" class="form-control" id="nombreDueno" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="emailDueno" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="emailDueno" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="telefonoDueno" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="telefonoDueno" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="direccionDueno" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccionDueno" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-wine w-100">Registrar Dueño</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Dueños Registrados</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>RUT</th>
+                                                    <th>Nombre</th>
+                                                    <th>Email</th>
+                                                    <th>Teléfono</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tablaDuenos">
+                                                <tr>
+                                                    <td>12.345.678-9</td>
+                                                    <td>Juan García</td>
+                                                    <td>juan@email.com</td>
+                                                    <td>+56 9 1234 5678</td>
+                                                    <td><span class="badge badge-active">Activo</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarDueno(this)">Editar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarDueno(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>11.234.567-8</td>
+                                                    <td>María López</td>
+                                                    <td>maria@email.com</td>
+                                                    <td>+56 9 9876 5432</td>
+                                                    <td><span class="badge badge-active">Activo</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarDueno(this)">Editar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarDueno(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10.123.456-7</td>
+                                                    <td>Carlos Müller</td>
+                                                    <td>carlos@email.com</td>
+                                                    <td>+56 9 5555 6666</td>
+                                                    <td><span class="badge badge-active">Activo</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarDueno(this)">Editar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarDueno(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GESTIÓN DE GESTORES -->
+                <div id="gestores" class="content-section">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-section">
+                                <h5 class="mb-3">Registrar Nuevo Gestor</h5>
+                                <form id="formGestor">
+                                    <div class="mb-3">
+                                        <label for="rutGestor" class="form-label">RUT</label>
+                                        <input type="text" class="form-control" id="rutGestor" placeholder="12.345.678-9" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nombreGestor" class="form-label">Nombre Completo</label>
+                                        <input type="text" class="form-control" id="nombreGestor" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="emailGestor" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="emailGestor" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="telefonoGestor" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="telefonoGestor" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="especilidadGestor" class="form-label">Especialidad</label>
+                                        <select class="form-select" id="especilidadGestor" required>
+                                            <option value="">Seleccionar...</option>
+                                            <option>Casas</option>
+                                            <option>Departamentos</option>
+                                            <option>Terrenos</option>
+                                            <option>Completo</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-wine w-100">Registrar Gestor</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Gestores Inmobiliarios Free</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>RUT</th>
+                                                    <th>Nombre</th>
+                                                    <th>Email</th>
+                                                    <th>Especialidad</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tablaGestores">
+                                                <tr>
+                                                    <td>15.456.789-0</td>
+                                                    <td>David Contreras</td>
+                                                    <td>david@email.com</td>
+                                                    <td>Casas y Departamentos</td>
+                                                    <td><span class="badge badge-active">Habilitado</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="habilitarGestor(this)">Habilitar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarGestor(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>14.678.901-2</td>
+                                                    <td>Andrea Valdez</td>
+                                                    <td>andrea@email.com</td>
+                                                    <td>Terrenos</td>
+                                                    <td><span class="badge badge-active">Habilitado</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="habilitarGestor(this)">Habilitar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarGestor(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>13.789.012-3</td>
+                                                    <td>Roberto Silva</td>
+                                                    <td>roberto@email.com</td>
+                                                    <td>Completo</td>
+                                                    <td><span class="badge badge-active">Habilitado</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="habilitarGestor(this)">Habilitar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarGestor(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GESTIÓN DE PUBLICACIONES -->
+                <div id="publicaciones" class="content-section">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-section">
+                                <h5 class="mb-3">Nueva Publicación</h5>
+                                <form id="formPublicacion">
+                                    <div class="mb-3">
+                                        <label for="tipoPropiedad" class="form-label">Tipo de Propiedad</label>
+                                        <select class="form-select" id="tipoPropiedad" required>
+                                            <option value="">Seleccionar...</option>
+                                            <option>Casa</option>
+                                            <option>Departamento</option>
+                                            <option>Terreno</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccion" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="comuna" class="form-label">Comuna</label>
+                                        <input type="text" class="form-control" id="comuna" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="precio" class="form-label">Precio (UF)</label>
+                                        <input type="number" class="form-control" id="precio" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="descripcion" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="descripcion" rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-wine w-100">Publicar Aviso</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Avisos Publicados</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Dirección</th>
+                                                    <th>Tipo</th>
+                                                    <th>Comuna</th>
+                                                    <th>Precio (UF)</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tablaPublicaciones">
+                                                <tr>
+                                                    <td>#001</td>
+                                                    <td>Av. Providencia 1500</td>
+                                                    <td>Casa</td>
+                                                    <td>Providencia</td>
+                                                    <td>2,500</td>
+                                                    <td><span class="badge badge-active">Publicado</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>#002</td>
+                                                    <td>Las Condes 2000</td>
+                                                    <td>Departamento</td>
+                                                    <td>Las Condes</td>
+                                                    <td>1,800</td>
+                                                    <td><span class="badge badge-active">Publicado</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>#003</td>
+                                                    <td>Ñuñoa 3500</td>
+                                                    <td>Terreno</td>
+                                                    <td>Ñuñoa</td>
+                                                    <td>900</td>
+                                                    <td><span class="badge badge-active">Publicado</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+        </div>
+    </main>
+
+    <footer class="bg-white text-center py-3 border-top mt-5" aria-label="Pie de página">
+        <div class="container-fluid">
+            <nav aria-label="Enlaces secundarios">
+                <a class="footer-link me-3" href="index.html">Volver al sitio</a>
+                <a class="footer-link" href="mailto:contacto@pnk.cl">contacto@pnk.cl</a>
+            </nav>
+            <p class="small text-muted mb-0">© 2026 Inmobiliaria PNK - Panel de Administración</p>
+        </div>
+    </footer>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="modalConfirmar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar acción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalMensaje">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmar" onclick="confirmarAccion()">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        let accionPendiente = null;
+        let elementoSeleccionado = null;
+
+        // Mostrar/ocultar secciones
+        function mostrarSeccion(seccion, evt) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Actualizar navegación
+            document.querySelectorAll('.sidebar .nav-link').forEach(el => {
+                el.classList.remove('active');
+            });
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            }
+
+            // Mostrar sección seleccionada
+            document.getElementById(seccion).classList.add('active');
+        }
+
+        // GESTIÓN DE DUEÑOS
+        document.getElementById('formDueno')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const rut = document.getElementById('rutDueno').value;
+            const nombre = document.getElementById('nombreDueno').value;
+            const email = document.getElementById('emailDueno').value;
+            const telefono = document.getElementById('telefonoDueno').value;
+            const direccion = document.getElementById('direccionDueno').value;
+
+            const nuevaFila = `<tr>
+                <td>${rut}</td>
+                <td>${nombre}</td>
+                <td>${email}</td>
+                <td>${telefono}</td>
+                <td><span class="badge badge-active">Activo</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="editarDueno(this)">Editar</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarDueno(this)">Eliminar</button>
+                </td>
+            </tr>`;
+
+            document.getElementById('tablaDuenos').insertAdjacentHTML('beforeend', nuevaFila);
+            document.getElementById('totalDuenos').textContent = document.querySelectorAll('#tablaDuenos tr').length;
+            this.reset();
+            alert('Dueño registrado exitosamente');
+        });
+
+        // GESTIÓN DE GESTORES
+        document.getElementById('formGestor')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const rut = document.getElementById('rutGestor').value;
+            const nombre = document.getElementById('nombreGestor').value;
+            const email = document.getElementById('emailGestor').value;
+            const especialidad = document.getElementById('especilidadGestor').value;
+
+            const nuevaFila = `<tr>
+                <td>${rut}</td>
+                <td>${nombre}</td>
+                <td>${email}</td>
+                <td>${especialidad}</td>
+                <td><span class="badge badge-active">Habilitado</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="habilitarGestor(this)">Habilitar</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarGestor(this)">Eliminar</button>
+                </td>
+            </tr>`;
+
+            document.getElementById('tablaGestores').insertAdjacentHTML('beforeend', nuevaFila);
+            document.getElementById('totalGestores').textContent = document.querySelectorAll('#tablaGestores tr').length;
+            this.reset();
+            alert('Gestor registrado exitosamente');
+        });
+
+        // GESTIÓN DE PUBLICACIONES
+        document.getElementById('formPublicacion')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const tipo = document.getElementById('tipoPropiedad').value;
+            const direccion = document.getElementById('direccion').value;
+            const comuna = document.getElementById('comuna').value;
+            const precio = document.getElementById('precio').value;
+
+            const id = `#${String(document.querySelectorAll('#tablaPublicaciones tr').length + 1).padStart(3, '0')}`;
+            const nuevaFila = `<tr>
+                <td>${id}</td>
+                <td>${direccion}</td>
+                <td>${tipo}</td>
+                <td>${comuna}</td>
+                <td>${precio}</td>
+                <td><span class="badge badge-active">Publicado</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button>
+                </td>
+            </tr>`;
+
+            document.getElementById('tablaPublicaciones').insertAdjacentHTML('beforeend', nuevaFila);
+            document.getElementById('totalPublicaciones').textContent = document.querySelectorAll('#tablaPublicaciones tr').length;
+            this.reset();
+            alert('Publicación creada exitosamente');
+        });
+
+        // Funciones de edición y eliminación
+        function editarDueno(btn) {
+            alert('Función de edición disponible próximamente');
+        }
+
+        function eliminarDueno(btn) {
+            elementoSeleccionado = btn;
+            accionPendiente = 'eliminarDueno';
+            document.getElementById('modalMensaje').textContent = '¿Está seguro de que desea eliminar este dueño del sistema?';
+            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
+        }
+
+        function habilitarGestor(btn) {
+            alert('Función de habilitación disponible próximamente');
+        }
+
+        function eliminarGestor(btn) {
+            elementoSeleccionado = btn;
+            accionPendiente = 'eliminarGestor';
+            document.getElementById('modalMensaje').textContent = '¿Está seguro de que desea eliminar este gestor del sistema?';
+            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
+        }
+
+        function editarPublicacion(btn) {
+            alert('Función de edición disponible próximamente');
+        }
+
+        function eliminarPublicacion(btn) {
+            elementoSeleccionado = btn;
+            accionPendiente = 'eliminarPublicacion';
+            document.getElementById('modalMensaje').textContent = '¿Está seguro de que desea eliminar esta publicación?';
+            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
+        }
+
+        function confirmarAccion() {
+            if (elementoSeleccionado) {
+                const fila = elementoSeleccionado.closest('tr');
+                let tabla = null;
+
+                if (accionPendiente === 'eliminarDueno') {
+                    tabla = 'tablaDuenos';
+                    document.getElementById('totalDuenos').textContent = document.querySelectorAll('#tablaDuenos tr').length - 1;
+                } else if (accionPendiente === 'eliminarGestor') {
+                    tabla = 'tablaGestores';
+                    document.getElementById('totalGestores').textContent = document.querySelectorAll('#tablaGestores tr').length - 1;
+                } else if (accionPendiente === 'eliminarPublicacion') {
+                    tabla = 'tablaPublicaciones';
+                    document.getElementById('totalPublicaciones').textContent = document.querySelectorAll('#tablaPublicaciones tr').length - 1;
+                }
+
+                fila.remove();
+                bootstrap.Modal.getInstance(document.getElementById('modalConfirmar')).hide();
+                alert('Elemento eliminado exitosamente');
+                elementoSeleccionado = null;
+                accionPendiente = null;
+            }
+        }
+
+        function cerrarSesion() {
+            if (confirm('¿Desea cerrar sesión?')) {
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
 </body>
-</html>adsfdgfhjgujhijlkhjgdfsfgdhyfjgukhijlhjghgf
-😀😀😀😀😀😀😀😀😀😀😀😀😀
+</html>
