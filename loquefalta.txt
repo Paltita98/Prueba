@@ -1,0 +1,13 @@
+- Al momento de Registrarse el Usuario debe quedar en estado pendiente
+hasta que el Administrador de la Plataforma active la cuenta previa
+verificación de antecedentes, cuando esto ocurra el Propietario recibirá un
+correo electrónico con toda la información necesaria de la activación de la
+cuenta.
+Una vez activa la cuenta el usuario propietario podrá subir todos los
+antecedentes respecto al inmueble, según las características de dicha
+propiedad.
+El usuario propietario podrá modificar, eliminar e ingresar todos los
+antecedentes las veces que quiera de cada propiedad desde su cuenta. 
+
+
+- si colocamos en el inicio de sesion ivan.araus@inacapmail.cl y la clave 12345 nos lleva al panel de propietario

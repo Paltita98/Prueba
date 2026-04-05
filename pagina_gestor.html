@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panel Gestor Inmobiliario - Inmobiliaria PNK</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		:root {
+			--primary: #1f6f5f;
+			--primary-dark: #175548;
+			--soft-bg: #eef5f2;
+			--line: #cde0d8;
+			--text: #1f2c28;
+		}
+
+		body {
+			min-height: 100vh;
+			color: var(--text);
+			font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+			background:
+				radial-gradient(circle at 85% 10%, rgba(31, 111, 95, 0.18), transparent 32%),
+				radial-gradient(circle at 10% 90%, rgba(86, 160, 139, 0.16), transparent 28%),
+				linear-gradient(150deg, #f8fcfb 0%, #eef5f2 100%);
+		}
+
+		.navbar-custom {
+			background: rgba(255, 255, 255, 0.9);
+			border-bottom: 1px solid var(--line);
+			backdrop-filter: blur(6px);
+		}
+
+		.navbar-brand {
+			color: var(--primary) !important;
+			font-weight: 700;
+		}
+
+		.hero {
+			border-radius: 16px;
+			padding: 1.4rem;
+			margin-bottom: 1.2rem;
+			color: white;
+			background: linear-gradient(120deg, #1f6f5f 0%, #2f8f7a 100%);
+			box-shadow: 0 10px 24px rgba(31, 111, 95, 0.25);
+		}
+
+		.panel-card {
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			box-shadow: 0 6px 14px rgba(22, 46, 39, 0.08);
+			background: #ffffff;
+		}
+
+		.panel-card .card-header {
+			background: #f8fcfb;
+			border-bottom: 1px solid var(--line);
+			font-weight: 600;
+			color: var(--primary-dark);
+		}
+
+		.btn-primary-gestor {
+			background: var(--primary);
+			border-color: var(--primary);
+			color: #fff;
+		}
+
+		.btn-primary-gestor:hover {
+			background: var(--primary-dark);
+			border-color: var(--primary-dark);
+			color: #fff;
+		}
+
+		.step-box {
+			border: 1px solid var(--line);
+			border-radius: 12px;
+			padding: 0.9rem;
+			background: #fbfefd;
+			margin-bottom: 0.7rem;
+		}
+
+		.status-pill {
+			font-size: 0.8rem;
+			font-weight: 600;
+		}
+
+		.ingresos-card {
+			border-radius: 14px;
+			border: 1px solid #bcd6cc;
+			background: linear-gradient(120deg, #eef9f5 0%, #ffffff 100%);
+			padding: 1rem;
+		}
+
+		.ingresos-card h3 {
+			color: var(--primary-dark);
+			font-weight: 700;
+			margin-bottom: 0.2rem;
+		}
+
+		.prop-card {
+			border: 1px solid var(--line);
+			border-radius: 12px;
+			padding: 0.9rem;
+			height: 100%;
+			background: #ffffff;
+		}
+
+		.hidden {
+			display: none !important;
+		}
+
+		@media (max-width: 768px) {
+			.hero {
+				padding: 1rem;
+			}
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-light navbar-custom" aria-label="Navegación gestor">
+			<div class="container">
+				<a class="navbar-brand" href="index.html">Inmobiliaria PNK - Gestor</a>
+				<div class="ms-auto d-flex gap-2">
+					<a class="btn btn-outline-secondary btn-sm" href="index.html">Volver al inicio</a>
+					<button class="btn btn-primary-gestor btn-sm" type="button" onclick="cerrarSesion()">Cerrar sesión</button>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<main class="container py-4">
+		<section class="hero" aria-label="Resumen del gestor">
+			<h1 class="h4 mb-2">Gestor Inmobiliario Free</h1>
+			<p class="mb-2">Desde este panel puede captar propiedades para la comunidad, recibir su PENKA_ID, ofrecer inmuebles y registrar comisiones.</p>
+			<span class="badge text-bg-light" id="usuarioGestorBadge">Cuenta activa</span>
+		</section>
+
+		<div class="row g-4">
+			<div class="col-lg-4">
+				<div class="card panel-card mb-4">
+					<div class="card-header">Ruta para ingresos adicionales</div>
+					<div class="card-body">
+						<div class="step-box">
+							<div class="d-flex justify-content-between align-items-center">
+								<strong>1. Registro de Gestor</strong>
+								<span class="badge status-pill" id="estadoRegistro">Pendiente</span>
+							</div>
+						</div>
+						<div class="step-box">
+							<div class="d-flex justify-content-between align-items-center">
+								<strong>2. Captar propiedad para la comunidad</strong>
+								<span class="badge status-pill" id="estadoCaptacion">Pendiente</span>
+							</div>
+						</div>
+						<div class="step-box">
+							<div class="d-flex justify-content-between align-items-center mb-2">
+								<strong>3. Aprobación y PENKA_ID</strong>
+								<span class="badge status-pill" id="estadoAprobacion">Pendiente</span>
+							</div>
+							<div class="small mb-2" id="penkaIdInfo">Aún no tiene PENKA_ID.</div>
+							<button id="btnSolicitarAprobacion" class="btn btn-primary-gestor btn-sm" type="button" onclick="solicitarAprobacion()">Solicitar evaluación</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="ingresos-card">
+					<div class="small text-muted">Ingresos por comisión</div>
+					<h3 id="totalComisiones">$0</h3>
+					<div class="small">Ventas gestionadas: <span id="cantidadVentas">0</span></div>
+				</div>
+			</div>
+
+			<div class="col-lg-8">
+				<div class="card panel-card mb-4">
+					<div class="card-header">Captar propiedad para la comunidad</div>
+					<div class="card-body">
+						<form id="captacionForm" class="row g-2">
+							<div class="col-md-4">
+								<label for="capTipo" class="form-label">Tipo</label>
+								<select id="capTipo" class="form-select" required>
+									<option value="">Seleccione</option>
+									<option value="Casa">Casa</option>
+									<option value="Departamento">Departamento</option>
+									<option value="Terreno">Terreno</option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<label for="capDireccion" class="form-label">Dirección / Sector</label>
+								<input id="capDireccion" type="text" class="form-control" required>
+							</div>
+							<div class="col-md-4">
+								<label for="capPrecio" class="form-label">Precio estimado (CLP)</label>
+								<input id="capPrecio" type="number" min="1" class="form-control" required>
+							</div>
+							<div class="col-md-12 d-flex gap-2 mt-2">
+								<button type="submit" class="btn btn-primary-gestor">Registrar captación</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<div id="seccionActiva" class="hidden">
+					<div class="card panel-card mb-4">
+						<div class="card-header">Subir antecedentes de propietario</div>
+						<div class="card-body">
+							<form id="antecedenteForm" class="row g-2">
+								<div class="col-md-6">
+									<label for="propNombre" class="form-label">Nombre propietario</label>
+									<input id="propNombre" type="text" class="form-control" required>
+								</div>
+								<div class="col-md-6">
+									<label for="propEmail" class="form-label">Correo propietario</label>
+									<input id="propEmail" type="email" class="form-control" required>
+								</div>
+								<div class="col-md-6">
+									<label for="propTelefono" class="form-label">Teléfono</label>
+									<input id="propTelefono" type="tel" class="form-control" required>
+								</div>
+								<div class="col-md-6">
+									<label for="propInmueble" class="form-label">Inmueble</label>
+									<input id="propInmueble" type="text" class="form-control" required>
+								</div>
+								<div class="col-md-12">
+									<label for="propAntecedentes" class="form-label">Antecedentes</label>
+									<textarea id="propAntecedentes" class="form-control" rows="3" required></textarea>
+								</div>
+								<div class="col-md-12 d-flex gap-2 mt-2">
+									<button type="submit" class="btn btn-primary-gestor">Guardar antecedentes</button>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<div class="card panel-card">
+						<div class="card-header">Ofertar inmuebles disponibles en la plataforma</div>
+						<div class="card-body">
+							<div class="row g-3" id="gridPropiedades"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script>
+		const GESTOR_EMAIL = 'mosiah.riveros@inacapmail.cl';
+		const ESTADO_KEY = 'pnkGestorEstado';
+		const CAPTACIONES_KEY = 'pnkGestorCaptaciones';
+		const VENTAS_KEY = 'pnkGestorVentas';
+		const ANTECEDENTES_KEY = 'pnkGestorAntecedentesPropietario';
+		const PROPIEDADES_OWNER_KEY = 'pnkPropiedadesPropietario';
+
+		function obtenerEstadoGestor() {
+			const raw = localStorage.getItem(ESTADO_KEY);
+			if (!raw) {
+				const inicial = { registrado: true, captoPropiedad: false, aprobado: false, penkaId: '' };
+				localStorage.setItem(ESTADO_KEY, JSON.stringify(inicial));
+				return inicial;
+			}
+			return JSON.parse(raw);
+		}
+
+		function guardarEstadoGestor(estado) {
+			localStorage.setItem(ESTADO_KEY, JSON.stringify(estado));
+		}
+
+		function obtenerLista(key) {
+			const raw = localStorage.getItem(key);
+			return raw ? JSON.parse(raw) : [];
+		}
+
+		function guardarLista(key, data) {
+			localStorage.setItem(key, JSON.stringify(data));
+		}
+
+		function formatearEstado(elemento, completado) {
+			elemento.textContent = completado ? 'Completado' : 'Pendiente';
+			elemento.className = completado ? 'badge bg-success status-pill' : 'badge bg-secondary status-pill';
+		}
+
+		function validarAcceso() {
+			const sesionActiva = localStorage.getItem('pnkSesionActiva') === 'true';
+			const rolActivo = localStorage.getItem('pnkRolActivo');
+			const usuarioActivo = localStorage.getItem('pnkUsuarioActivo') || '';
+
+			if (!sesionActiva || rolActivo !== 'gestor' || usuarioActivo.toLowerCase() !== GESTOR_EMAIL) {
+				alert('Debe iniciar sesión con el usuario gestor autorizado.');
+				window.location.href = 'index.html';
+				return false;
+			}
+
+			document.getElementById('usuarioGestorBadge').textContent = `Cuenta activa: ${usuarioActivo}`;
+			return true;
+		}
+
+		function actualizarUIEstado() {
+			const estado = obtenerEstadoGestor();
+			formatearEstado(document.getElementById('estadoRegistro'), !!estado.registrado);
+			formatearEstado(document.getElementById('estadoCaptacion'), !!estado.captoPropiedad);
+			formatearEstado(document.getElementById('estadoAprobacion'), !!estado.aprobado);
+
+			const penkaInfo = document.getElementById('penkaIdInfo');
+			const seccionActiva = document.getElementById('seccionActiva');
+			const btnAprobacion = document.getElementById('btnSolicitarAprobacion');
+
+			if (estado.aprobado && estado.penkaId) {
+				penkaInfo.textContent = `PENKA_ID asignado: ${estado.penkaId}`;
+				btnAprobacion.disabled = true;
+				btnAprobacion.textContent = 'Aprobado';
+				seccionActiva.classList.remove('hidden');
+			} else {
+				penkaInfo.textContent = 'Aún no tiene PENKA_ID.';
+				btnAprobacion.disabled = false;
+				btnAprobacion.textContent = 'Solicitar evaluación';
+				seccionActiva.classList.add('hidden');
+			}
+		}
+
+		function registrarCaptacion(event) {
+			event.preventDefault();
+			const tipo = document.getElementById('capTipo').value;
+			const direccion = document.getElementById('capDireccion').value.trim();
+			const precio = document.getElementById('capPrecio').value;
+
+			if (!tipo || !direccion || !precio) {
+				alert('Complete todos los datos de captación.');
+				return;
+			}
+
+			const captaciones = obtenerLista(CAPTACIONES_KEY);
+			captaciones.push({ id: Date.now(), tipo, direccion, precio: Number(precio) });
+			guardarLista(CAPTACIONES_KEY, captaciones);
+
+			const estado = obtenerEstadoGestor();
+			estado.captoPropiedad = true;
+			guardarEstadoGestor(estado);
+
+			document.getElementById('captacionForm').reset();
+			actualizarUIEstado();
+			renderizarPropiedades();
+			alert('Captación registrada para la comunidad.');
+		}
+
+		function solicitarAprobacion() {
+			const estado = obtenerEstadoGestor();
+			if (!estado.captoPropiedad) {
+				alert('Primero debe captar una propiedad para la comunidad.');
+				return;
+			}
+
+			if (!estado.aprobado) {
+				estado.aprobado = true;
+				estado.penkaId = `PENKA-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+				guardarEstadoGestor(estado);
+				alert(`Su cuenta fue aceptada. PENKA_ID asignado: ${estado.penkaId}`);
+			}
+
+			actualizarUIEstado();
+			renderizarPropiedades();
+		}
+
+		function guardarAntecedente(event) {
+			event.preventDefault();
+
+			const nombre = document.getElementById('propNombre').value.trim();
+			const email = document.getElementById('propEmail').value.trim();
+			const telefono = document.getElementById('propTelefono').value.trim();
+			const inmueble = document.getElementById('propInmueble').value.trim();
+			const antecedentes = document.getElementById('propAntecedentes').value.trim();
+
+			if (!nombre || !email || !telefono || !inmueble || !antecedentes) {
+				alert('Complete todos los antecedentes del propietario.');
+				return;
+			}
+
+			const lista = obtenerLista(ANTECEDENTES_KEY);
+			lista.push({ id: Date.now(), nombre, email, telefono, inmueble, antecedentes });
+			guardarLista(ANTECEDENTES_KEY, lista);
+
+			document.getElementById('antecedenteForm').reset();
+			alert('Antecedentes del propietario guardados correctamente.');
+		}
+
+		function obtenerPropiedadesPlataforma() {
+			const delPropietario = obtenerLista(PROPIEDADES_OWNER_KEY).map((item) => ({
+				id: `owner-${item.id}`,
+				tipo: item.tipo,
+				direccion: item.direccion,
+				precio: Number(item.precio || 0)
+			}));
+
+			const captadas = obtenerLista(CAPTACIONES_KEY).map((item) => ({
+				id: `cap-${item.id}`,
+				tipo: item.tipo,
+				direccion: item.direccion,
+				precio: Number(item.precio || 0)
+			}));
+
+			const base = [
+				{ id: 'base-1', tipo: 'Casa', direccion: 'Milagro 2, La Serena', precio: 110000000 },
+				{ id: 'base-2', tipo: 'Departamento', direccion: 'San Joaquín, Santiago', precio: 95000000 }
+			];
+
+			const mapa = new Map();
+			[...base, ...delPropietario, ...captadas].forEach((item) => {
+				mapa.set(item.id, item);
+			});
+
+			return Array.from(mapa.values());
+		}
+
+		function renderizarPropiedades() {
+			const estado = obtenerEstadoGestor();
+			const grid = document.getElementById('gridPropiedades');
+			grid.innerHTML = '';
+
+			if (!estado.aprobado) {
+				grid.innerHTML = '<div class="col-12"><div class="alert alert-warning mb-0">Necesita PENKA_ID activo para ofertar inmuebles.</div></div>';
+				return;
+			}
+
+			const propiedades = obtenerPropiedadesPlataforma();
+			if (propiedades.length === 0) {
+				grid.innerHTML = '<div class="col-12"><div class="alert alert-secondary mb-0">No hay inmuebles disponibles para ofertar.</div></div>';
+				return;
+			}
+
+			propiedades.forEach((propiedad) => {
+				const col = document.createElement('div');
+				col.className = 'col-md-6';
+
+				col.innerHTML = `
+					<div class="prop-card">
+						<h6 class="mb-1">${propiedad.tipo}</h6>
+						<div class="small text-muted mb-1">${propiedad.direccion}</div>
+						<div class="fw-semibold mb-2">$${Number(propiedad.precio).toLocaleString('es-CL')}</div>
+						<div class="d-flex gap-2">
+							<button class="btn btn-sm btn-outline-primary" type="button" onclick="ofertarPropiedad('${propiedad.id}')">Ofertar</button>
+							<button class="btn btn-sm btn-primary-gestor" type="button" onclick="registrarVenta('${propiedad.id}')">Registrar venta</button>
+						</div>
+					</div>
+				`;
+
+				grid.appendChild(col);
+			});
+		}
+
+		function ofertarPropiedad(propiedadId) {
+			const propiedades = obtenerPropiedadesPlataforma();
+			const propiedad = propiedades.find((item) => item.id === propiedadId);
+			if (!propiedad) return;
+			alert(`Oferta publicada para: ${propiedad.tipo} en ${propiedad.direccion}`);
+		}
+
+		function registrarVenta(propiedadId) {
+			const propiedades = obtenerPropiedadesPlataforma();
+			const propiedad = propiedades.find((item) => item.id === propiedadId);
+			if (!propiedad) return;
+
+			const ventas = obtenerLista(VENTAS_KEY);
+			if (ventas.some((venta) => venta.propiedadId === propiedadId)) {
+				alert('Esta venta ya fue registrada para comisión.');
+				return;
+			}
+
+			const comision = Math.round(propiedad.precio * 0.02);
+			ventas.push({ propiedadId, precio: propiedad.precio, comision, fecha: new Date().toISOString() });
+			guardarLista(VENTAS_KEY, ventas);
+			actualizarIngresos();
+			alert(`Venta registrada. Comisión generada: $${comision.toLocaleString('es-CL')}`);
+		}
+
+		function actualizarIngresos() {
+			const ventas = obtenerLista(VENTAS_KEY);
+			const total = ventas.reduce((acc, item) => acc + Number(item.comision || 0), 0);
+			document.getElementById('totalComisiones').textContent = `$${total.toLocaleString('es-CL')}`;
+			document.getElementById('cantidadVentas').textContent = String(ventas.length);
+		}
+
+		function cerrarSesion() {
+			localStorage.removeItem('pnkSesionActiva');
+			localStorage.removeItem('pnkRolActivo');
+			localStorage.removeItem('pnkUsuarioActivo');
+			window.location.href = 'index.html';
+		}
+
+		document.addEventListener('DOMContentLoaded', function() {
+			if (!validarAcceso()) return;
+			const estado = obtenerEstadoGestor();
+			estado.registrado = true;
+			guardarEstadoGestor(estado);
+
+			document.getElementById('captacionForm').addEventListener('submit', registrarCaptacion);
+			document.getElementById('antecedenteForm').addEventListener('submit', guardarAntecedente);
+
+			actualizarUIEstado();
+			actualizarIngresos();
+			renderizarPropiedades();
+		});
+	</script>
+</body>
+</html>
