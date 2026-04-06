@@ -214,7 +214,10 @@
                 <div class="card panel-card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span>Propiedades registradas</span>
-                        <span class="badge text-bg-light" id="contadorPropiedades">0 propiedades</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" onclick="cargarEjemplosPropietario(true)">Cargar ejemplos</button>
+                            <span class="badge text-bg-light" id="contadorPropiedades">0 propiedades</span>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div id="estadoVacio" class="empty-box">Aún no hay propiedades cargadas. Use el formulario para ingresar antecedentes.</div>
@@ -240,6 +243,7 @@
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
         const STORAGE_KEY = 'pnkPropiedadesPropietario';
+        const SEED_KEY = 'pnkPropiedadesSeedInicial';
         const MAX_FOTOS = 10;
         let fotosEnEdicion = [];
 
@@ -264,6 +268,71 @@
 
         function guardarPropiedades(lista) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+        }
+
+        function obtenerEjemplosPropiedades() {
+            return [
+                {
+                    id: Date.now(),
+                    tipo: 'Casa',
+                    direccion: 'Milagro 2, La Serena',
+                    dormitorios: 4,
+                    banos: 3,
+                    areaTotal: 260,
+                    precio: 220000000,
+                    caracteristicas: 'Piscina, bodega, estacionamiento, quincho',
+                    antecedentes: 'Rol al día, mantenciones vigentes, sin deudas de contribuciones.',
+                    fotos: []
+                },
+                {
+                    id: Date.now() + 1,
+                    tipo: 'Departamento',
+                    direccion: 'Av. Pacífico, La Serena',
+                    dormitorios: 3,
+                    banos: 2,
+                    areaTotal: 110,
+                    precio: 165000000,
+                    caracteristicas: 'Terraza, estacionamiento, bodega, conserjería 24/7',
+                    antecedentes: 'Reglamento de copropiedad actualizado y certificado de dominio vigente.',
+                    fotos: []
+                },
+                {
+                    id: Date.now() + 2,
+                    tipo: 'Casa',
+                    direccion: 'Sector San Joaquín, La Serena',
+                    dormitorios: 5,
+                    banos: 4,
+                    areaTotal: 420,
+                    precio: 390000000,
+                    caracteristicas: 'Patio amplio, piscina temperada, cocina amoblada, sala multiuso',
+                    antecedentes: 'Propiedad con recepción final aprobada y documentos notariales al día.',
+                    fotos: []
+                }
+            ];
+        }
+
+        function cargarEjemplosPropietario(forzarCarga = false) {
+            const listaActual = obtenerPropiedades();
+            const yaSeed = localStorage.getItem(SEED_KEY) === 'true';
+
+            if (!forzarCarga && (listaActual.length > 0 || yaSeed)) {
+                return;
+            }
+
+            if (forzarCarga && listaActual.length > 0) {
+                const confirmar = confirm('Ya existen propiedades cargadas. ¿Desea reemplazarlas por ejemplos?');
+                if (!confirmar) return;
+            }
+
+            const ejemplos = obtenerEjemplosPropiedades();
+            guardarPropiedades(ejemplos);
+            localStorage.setItem(SEED_KEY, 'true');
+            renderizarTabla();
+            limpiarFormulario();
+
+            if (forzarCarga) {
+                alert('Se cargaron ejemplos de viviendas. Ahora puede modificarlos, eliminarlos o agregar nuevos antecedentes las veces que quiera.');
+            }
         }
 
         function renderizarTabla() {
@@ -492,6 +561,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             validarAcceso();
             registrarEventos();
+            cargarEjemplosPropietario();
             renderizarTabla();
         });
     </script>
