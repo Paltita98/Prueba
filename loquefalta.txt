@@ -11,3 +11,5 @@ antecedentes las veces que quiera de cada propiedad desde su cuenta.
 
 
 - si colocamos en el inicio de sesion ivan.araus@inacapmail.cl y la clave 12345 nos lleva al panel de propietario
+
+crear ejemplo y aplicar el modificar y eliminar propiedad
