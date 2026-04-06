@@ -1,0 +1,5 @@
+para entrar al panel de admin esta al bajo de todo y eso se ve solo para el admin
+
+- si colocamos en el inicio de sesion ivan.araus@inacapmail.cl y la clave 12345 nos lleva al panel de propietario
+
+- si colocamos en el inicio de sesion mosiah.riveros@inacapmail.cl y la clave 12345 nos lleva al panel de gestor inmobiliario
