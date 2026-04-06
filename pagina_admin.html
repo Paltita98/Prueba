@@ -379,32 +379,21 @@
                                                     <td>Juan García</td>
                                                     <td>juan@email.com</td>
                                                     <td>+56 9 1234 5678</td>
-                                                    <td><span class="badge badge-active">Activo</span></td>
+                                                    <td><span class="badge bg-success">Activo</span></td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarDueno(this)">Editar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarDueno(this)">Eliminar</button>
+                                                        <button class="btn btn-sm btn-secondary" onclick="editarDueno(this)">Editar</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="eliminarDueno(this)">Eliminar</button>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr class="table-warning">
                                                     <td>11.234.567-8</td>
                                                     <td>María López</td>
                                                     <td>maria@email.com</td>
                                                     <td>+56 9 9876 5432</td>
-                                                    <td><span class="badge badge-active">Activo</span></td>
+                                                    <td><span class="badge bg-warning text-dark">Pendiente</span></td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarDueno(this)">Editar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarDueno(this)">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10.123.456-7</td>
-                                                    <td>Carlos Müller</td>
-                                                    <td>carlos@email.com</td>
-                                                    <td>+56 9 5555 6666</td>
-                                                    <td><span class="badge badge-active">Activo</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarDueno(this)">Editar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarDueno(this)">Eliminar</button>
+                                                        <button class="btn btn-sm btn-success" onclick="aceptarDueno(this)">Aceptar</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="rechazarDueno(this)">Rechazar</button>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -463,6 +452,7 @@
                                         <table class="table table-hover">
                                             <thead class="table-light">
                                                 <tr>
+                                                    <th>PENKA_ID</th>
                                                     <th>RUT</th>
                                                     <th>Nombre</th>
                                                     <th>Email</th>
@@ -473,36 +463,27 @@
                                             </thead>
                                             <tbody id="tablaGestores">
                                                 <tr>
+                                                    <td><strong>PNK-1042</strong></td>
                                                     <td>15.456.789-0</td>
                                                     <td>David Contreras</td>
                                                     <td>david@email.com</td>
                                                     <td>Casas y Departamentos</td>
-                                                    <td><span class="badge badge-active">Habilitado</span></td>
+                                                    <td><span class="badge bg-success">Activo</span></td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-outline-primary" onclick="habilitarGestor(this)">Habilitar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarGestor(this)">Eliminar</button>
+                                                        <button class="btn btn-sm btn-secondary" onclick="editarGestor(this)">Editar</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="eliminarGestor(this)">Eliminar</button>
                                                     </td>
                                                 </tr>
                                                 <tr>
+                                                    <td><span class="text-muted fst-italic">Por asignar</span></td>
                                                     <td>14.678.901-2</td>
                                                     <td>Andrea Valdez</td>
                                                     <td>andrea@email.com</td>
                                                     <td>Terrenos</td>
-                                                    <td><span class="badge badge-active">Habilitado</span></td>
+                                                    <td><span class="badge bg-warning">Pendiente</span></td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-outline-primary" onclick="habilitarGestor(this)">Habilitar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarGestor(this)">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>13.789.012-3</td>
-                                                    <td>Roberto Silva</td>
-                                                    <td>roberto@email.com</td>
-                                                    <td>Completo</td>
-                                                    <td><span class="badge badge-active">Habilitado</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary" onclick="habilitarGestor(this)">Habilitar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarGestor(this)">Eliminar</button>
+                                                        <button class="btn btn-sm btn-success" onclick="aceptarGestor(this)">Aceptar</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="rechazarGestor(this)">Rechazar</button>
                                                     </td>
                                                 </tr>
                                             </tbody>
