@@ -217,6 +217,16 @@
             color: #722f37;
             text-decoration: underline;
         }
+
+        .prop-thumbnail {
+            width: 68px;
+            height: 46px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            background: #f8f9fa;
+        }
+
     </style>
 </head>
 <body>
@@ -256,6 +266,9 @@
                 <nav class="sidebar nav flex-column" aria-label="Navegación del panel administrativo">
                     <a class="nav-link active" href="#dashboard" onclick="mostrarSeccion('dashboard', event);">
                         📊 Dashboard
+                    </a>
+                    <a class="nav-link" href="#" onclick="abrirCrudPropiedades(event)">
+                        🏘️ Administrar Propiedades
                     </a>
                     <a class="nav-link" href="#duenos" onclick="mostrarSeccion('duenos', event);">
                         👤 Dueños de Inmuebles
@@ -320,6 +333,19 @@
                                     <strong>Usuario Eliminado:</strong> Dueño "Roberto Silva" dado de baja - <span class="text-muted">Hace 3 días</span>
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5>Gestión de Inmuebles</h5>
+                        </div>
+                        <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                            <div>
+                                <p class="mb-1 fw-semibold">Acceso directo al CRUD de propiedades</p>
+                                <p class="mb-0 text-muted">Desde aquí puedes insertar, editar y eliminar inmuebles registrados en la base de datos.</p>
+                            </div>
+                            <button type="button" class="btn btn-wine btn-lg" onclick="abrirCrudPropiedades(event)">Administrar Propiedades</button>
                         </div>
                     </div>
                 </section>
@@ -611,6 +637,189 @@
         </div>
     </footer>
 
+    <div class="modal fade" id="crudPropiedadesModal" tabindex="-1" aria-labelledby="crudPropiedadesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="crudPropiedadesModalLabel">Administrar Propiedades</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="form-section h-100 mb-0">
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                                    <h5 class="mb-0">Formulario de Propiedad</h5>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFormularioPropiedadAdmin()">Nueva</button>
+                                </div>
+                                <form id="formPropiedadAdmin" class="row g-2" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf" id="propAdminCsrf" value="">
+                                    <input type="hidden" name="accion" id="propAdminAccion" value="insertar">
+                                    <input type="hidden" name="id" id="propAdminId" value="">
+                                    <input type="hidden" name="current_foto_url" id="propAdminCurrentFoto" value="casa1.webp">
+
+                                    <div class="col-12">
+                                        <label class="form-label">Tipo de Propiedad</label>
+                                        <select name="tipo_propiedad" id="propAdminTipo" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Casa">Casa</option>
+                                            <option value="Departamento">Departamento</option>
+                                            <option value="Terreno">Terreno</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Fotografías (1 a 10)</label>
+                                        <input type="file" name="fotos[]" id="propAdminFotos" class="form-control" accept="image/*" multiple>
+                                        <small class="text-muted d-block mt-1">Si editas sin subir nuevas imágenes, se conserva la principal actual.</small>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Descripción</label>
+                                        <textarea name="descripcion" id="propAdminDescripcion" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Baños</label>
+                                        <input name="banos" id="propAdminBanos" type="number" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Dormitorios</label>
+                                        <input name="dormitorios" id="propAdminDormitorios" type="number" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Área Total</label>
+                                        <input name="area_total" id="propAdminAreaTotal" type="number" step="0.01" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Área Construida</label>
+                                        <input name="area_construida" id="propAdminAreaConstruida" type="number" step="0.01" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Precio CLP</label>
+                                        <input name="precio_clp" id="propAdminPrecioCLP" type="number" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Precio UF</label>
+                                        <input name="precio_uf" id="propAdminPrecioUF" type="number" step="0.01" class="form-control" required readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Fecha de Publicación</label>
+                                        <input name="fecha_publicacion" id="propAdminFecha" type="date" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Solicitar Visita</label>
+                                        <select name="solicitar_visita" id="propAdminVisita" class="form-select" required>
+                                            <option value="No">No</option>
+                                            <option value="Sí">Sí</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Bodega</label>
+                                        <select name="bodega" id="propAdminBodega" class="form-select" required>
+                                            <option value="No">No</option>
+                                            <option value="Sí">Sí</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Estacionamiento</label>
+                                        <select name="estacionamiento" id="propAdminEstacionamiento" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Sí">Sí</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Logia</label>
+                                        <select name="logia" id="propAdminLogia" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Sí">Sí</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Cocina Amoblada</label>
+                                        <select name="cocina_amoblada" id="propAdminCocina" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Sí">Sí</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Antejardín</label>
+                                        <select name="antejardin" id="propAdminAntejardin" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Sí">Sí</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Patio Trasero</label>
+                                        <select name="patio_trasero" id="propAdminPatio" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Sí">Sí</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Piscina</label>
+                                        <select name="piscina" id="propAdminPiscina" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Sí">Sí</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Provincia</label>
+                                        <input name="provincia" id="propAdminProvincia" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Comuna</label>
+                                        <input name="comuna" id="propAdminComuna" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Sector</label>
+                                        <input name="sector" id="propAdminSector" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="col-12 d-flex gap-2 mt-3">
+                                        <button type="submit" class="btn btn-wine">Guardar Propiedad</button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="limpiarFormularioPropiedadAdmin()">Limpiar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="card h-100">
+                                <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                    <h5 class="mb-0">Propiedades Registradas</h5>
+                                    <button type="button" class="btn btn-light btn-sm" onclick="cargarListadoPropiedadesAdmin()">Actualizar listado</button>
+                                </div>
+                                <div class="card-body">
+                                    <div id="propiedadesAdminAlerta" class="alert alert-light border mb-3">Aquí verás todas las propiedades guardadas en la base de datos.</div>
+                                    <div class="table-responsive" style="max-height: 68vh;">
+                                        <table class="table table-bordered table-hover align-middle">
+                                            <thead class="table-light sticky-top">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Tipo</th>
+                                                    <th>Descripción</th>
+                                                    <th>Baños</th>
+                                                    <th>Dorm.</th>
+                                                    <th>Área Total</th>
+                                                    <th>Foto</th>
+                                                    <th>Precio</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tablaPropiedadesAdmin"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Confirmación -->
     <div class="modal fade" id="modalConfirmar" tabindex="-1">
         <div class="modal-dialog">
@@ -629,10 +838,13 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/validaciones.js"></script>
     <script>
         let accionPendiente = null;
         let elementoSeleccionado = null;
+        let csrfAdminToken = '';
 
         // Mostrar/ocultar secciones
         function mostrarSeccion(seccion, evt) {
@@ -652,6 +864,203 @@
             // Mostrar sección seleccionada
             document.getElementById(seccion).classList.add('active');
         }
+
+        function abrirCrudPropiedades(event) {
+            if (event) {
+                event.preventDefault();
+            }
+            const modal = new bootstrap.Modal(document.getElementById('crudPropiedadesModal'));
+            modal.show();
+            cargarCsrfAdmin();
+            cargarListadoPropiedadesAdmin();
+            limpiarFormularioPropiedadAdmin();
+        }
+
+        function toYesNoValue(value) {
+            if (value === true || value === 1 || value === '1') return 'Sí';
+            const normalized = String(value ?? '').trim().toLowerCase();
+            return ['sí', 'si', 'true', 'yes'].includes(normalized) ? 'Sí' : 'No';
+        }
+
+        function cargarCsrfAdmin() {
+            if (csrfAdminToken) {
+                document.getElementById('propAdminCsrf').value = csrfAdminToken;
+                return Promise.resolve(csrfAdminToken);
+            }
+
+            return fetch('php/csrf_token.php')
+                .then(r => r.json())
+                .then(resp => {
+                    if (resp.ok && resp.csrf) {
+                        csrfAdminToken = resp.csrf;
+                        document.getElementById('propAdminCsrf').value = csrfAdminToken;
+                    }
+                    return csrfAdminToken;
+                })
+                .catch(() => {
+                    document.getElementById('propAdminCsrf').value = '';
+                    return '';
+                });
+        }
+
+        function calcularPrecioUFAdmin() {
+            const clp = document.getElementById('propAdminPrecioCLP').value;
+            document.getElementById('propAdminPrecioUF').value = calcularUFFromCLP(clp);
+        }
+
+        function limpiarFormularioPropiedadAdmin() {
+            const form = document.getElementById('formPropiedadAdmin');
+            if (!form) return;
+            form.reset();
+            document.getElementById('propAdminAccion').value = 'insertar';
+            document.getElementById('propAdminId').value = '';
+            document.getElementById('propAdminCurrentFoto').value = 'casa1.webp';
+            document.getElementById('propAdminPrecioUF').value = '';
+            document.getElementById('propAdminFotos').value = '';
+            document.getElementById('propAdminTipo').focus();
+        }
+
+            function cargarPropiedadEnFormularioAdmin(propiedad) {
+            document.getElementById('propAdminAccion').value = 'modificar';
+            document.getElementById('propAdminId').value = propiedad.id || '';
+            document.getElementById('propAdminTipo').value = propiedad.tipo_propiedad || '';
+            document.getElementById('propAdminDescripcion').value = propiedad.descripcion || '';
+            document.getElementById('propAdminBanos').value = propiedad.banos || 0;
+            document.getElementById('propAdminDormitorios').value = propiedad.dormitorios || 0;
+            document.getElementById('propAdminAreaTotal').value = propiedad.area_total || '';
+            document.getElementById('propAdminAreaConstruida').value = propiedad.area_construida || '';
+            document.getElementById('propAdminPrecioCLP').value = propiedad.precio_clp || '';
+            document.getElementById('propAdminPrecioUF').value = propiedad.precio_uf || '';
+            document.getElementById('propAdminFecha').value = propiedad.fecha_publicacion ? String(propiedad.fecha_publicacion).split(' ')[0] : '';
+    
+    // Sincronizar el string exacto 'Sí' o 'No' con los elementos del modal
+            document.getElementById('propAdminVisita').value = toYesNoValue(propiedad.solicitar_visita);
+            document.getElementById('propAdminBodega').value = toYesNoValue(propiedad.bodega);
+            document.getElementById('propAdminEstacionamiento').value = toYesNoValue(propiedad.estacionamiento);
+            document.getElementById('propAdminLogia').value = toYesNoValue(propiedad.logia);
+            document.getElementById('propAdminCocina').value = toYesNoValue(propiedad.cocina_amoblada);
+            document.getElementById('propAdminAntejardin').value = toYesNoValue(propiedad.antejardin);
+            document.getElementById('propAdminPatio').value = toYesNoValue(propiedad.patio_trasero);
+            document.getElementById('propAdminPiscina').value = toYesNoValue(propiedad.piscina);
+    
+            document.getElementById('propAdminProvincia').value = propiedad.provincia || '';
+            document.getElementById('propAdminComuna').value = propiedad.comuna || '';
+            document.getElementById('propAdminSector').value = propiedad.sector || '';
+            document.getElementById('propAdminCurrentFoto').value = propiedad.foto_url || 'casa1.webp';
+            document.getElementById('propAdminFotos').value = '';
+            document.getElementById('propAdminTipo').focus();
+        }
+
+        function cargarListadoPropiedadesAdmin() {
+            const tbody = document.getElementById('tablaPropiedadesAdmin');
+            const alerta = document.getElementById('propiedadesAdminAlerta');
+            if (!tbody || !alerta) return;
+
+            fetch('php/search_propiedades.php')
+                .then(r => r.json())
+                .then(data => {
+                    tbody.innerHTML = '';
+                    if (!Array.isArray(data) || data.length === 0) {
+                        alerta.className = 'alert alert-secondary border mb-3';
+                        alerta.textContent = 'No hay propiedades registradas todavía.';
+                        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">Sin registros</td></tr>';
+                        return;
+                    }
+
+                    alerta.className = 'alert alert-success border mb-3';
+                    alerta.textContent = `Se encontraron ${data.length} propiedades registradas.`;
+                    data.forEach(propiedad => {
+                        const row = document.createElement('tr');
+                        const foto = propiedad.foto_url ? `uploads/properties/${propiedad.foto_url}` : 'img/casa1.webp';
+                        const propData = encodeURIComponent(JSON.stringify(propiedad));
+                        row.innerHTML = `
+                            <td>${propiedad.id}</td>
+                            <td>${propiedad.tipo_propiedad || ''}</td>
+                            <td>${propiedad.descripcion || ''}</td>
+                            <td>${propiedad.banos ?? ''}</td>
+                            <td>${propiedad.dormitorios ?? ''}</td>
+                            <td>${propiedad.area_total ?? ''}</td>
+                            <td><img src="${foto}" alt="Foto propiedad" class="prop-thumbnail"></td>
+                            <td>$${Number(propiedad.precio_clp || 0).toLocaleString('es-CL')}</td>
+                            <td>
+                                <div class="d-flex flex-column gap-2">
+                                    <button type="button" class="btn btn-warning btn-sm">Editar</button>
+                                    <button type="button" class="btn btn-danger btn-sm">Eliminar</button>
+                                </div>
+                            </td>
+                        `;
+                        row.querySelector('.btn-warning').addEventListener('click', () => {
+                            cargarPropiedadEnFormularioAdmin(JSON.parse(decodeURIComponent(propData)));
+                        });
+                        row.querySelector('.btn-danger').addEventListener('click', () => {
+                            confirmarEliminarPropiedadAdmin(Number(propiedad.id));
+                        });
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(() => {
+                    alerta.className = 'alert alert-danger border mb-3';
+                    alerta.textContent = 'No se pudo cargar el listado de propiedades.';
+                });
+        }
+
+        function confirmarEliminarPropiedadAdmin(id) {
+            Swal.fire({
+                title: '¿Eliminar propiedad?',
+                text: 'Esta acción no se puede deshacer.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar'
+            }).then(result => {
+                if (!result.isConfirmed) return;
+                const csrf = document.getElementById('propAdminCsrf').value || csrfAdminToken || '';
+                fetch('php/crud_propiedades.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: new URLSearchParams({accion: 'eliminar', id: id, csrf: csrf})
+                })
+                .then(r => r.json())
+                .then(resp => {
+                    if (resp.ok) {
+                        Swal.fire('Eliminada', 'La propiedad fue eliminada', 'success');
+                        cargarListadoPropiedadesAdmin();
+                        limpiarFormularioPropiedadAdmin();
+                    } else {
+                        Swal.fire('Error', resp.error || 'No se pudo eliminar', 'error');
+                    }
+                })
+                .catch(() => Swal.fire('Error', 'Error de red', 'error'));
+            });
+        }
+
+        document.getElementById('crudPropiedadesModal')?.addEventListener('shown.bs.modal', () => {
+            cargarCsrfAdmin();
+            cargarListadoPropiedadesAdmin();
+        });
+
+        document.getElementById('propAdminPrecioCLP')?.addEventListener('input', calcularPrecioUFAdmin);
+        document.getElementById('formPropiedadAdmin')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            if (!validarFormularioPropiedad(form)) return;
+            form.querySelector('[name="precio_uf"]').value = calcularUFFromCLP(form.querySelector('[name="precio_clp"]').value);
+            if (!form.querySelector('[name="csrf"]').value) {
+                await cargarCsrfAdmin();
+            }
+            const fd = new FormData(form);
+            fetch('php/crud_propiedades.php', { method: 'POST', body: fd })
+                .then(r => r.json())
+                .then(resp => {
+                    if (resp.ok) {
+                        Swal.fire('Guardado', 'Propiedad guardada correctamente', 'success');
+                        limpiarFormularioPropiedadAdmin();
+                        cargarListadoPropiedadesAdmin();
+                    } else {
+                        Swal.fire('Error', resp.error || 'No se pudo guardar', 'error');
+                    }
+                })
+                .catch(() => Swal.fire('Error', 'Error de red', 'error'));
+        });
 
         // GESTIÓN DE DUEÑOS
         document.getElementById('formDueno')?.addEventListener('submit', function(e) {

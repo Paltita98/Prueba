@@ -1085,7 +1085,9 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/validaciones.js"></script>
     <script>
         const datosInmuebles = {
             1: { baños: 2, dormitorios: 3, areaTotal: 200, areaConstruida: 150 },
@@ -1438,60 +1440,45 @@
             }
         }
 
-        function enviarLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPassword').value.trim();
+function enviarLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value.trim();
+    if (!email || !pass) {
+        Swal.fire('Atención','Por favor ingrese correo y contraseña.','warning');
+        return;
+    }
 
-            if (!email || !pass) {
-                alert('Por favor ingrese correo y contraseña.');
-                return;
-            }
+    const fd = new FormData();
+    fd.append('login', '1');
+    fd.append('correo', email);
+    fd.append('password', pass);
 
-            const emailPropietario = 'ivan.araus@inacapmail.cl';
-            const contrasenaPropietario = '12345';
-            const emailGestor = 'mosiah.riveros@inacapmail.cl';
-            const contrasenaGestor = '12345';
+    fetch('php/auth.php', { method: 'POST', body: fd }).then(r => r.json()).then(data => {
+        if (data.status === 'success') {
+            // Sincronizar sesión con LocalStorage para compatibilidad con tus páginas estáticas
+            localStorage.setItem('pnkSesionActiva', 'true');
+            localStorage.setItem('pnkUsuarioActivo', email);
 
-            if (email.toLowerCase() === emailPropietario && pass === contrasenaPropietario) {
-                localStorage.setItem('pnkSesionActiva', 'true');
-                localStorage.setItem('pnkRolActivo', 'propietario');
-                localStorage.setItem('pnkUsuarioActivo', emailPropietario);
-
-                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                if (loginModal) loginModal.hide();
-                document.getElementById('loginForm').reset();
-
-                window.location.href = 'pagina_propietario.html';
-                return;
-            }
-
-            if (email.toLowerCase() === emailGestor && pass === contrasenaGestor) {
-                localStorage.setItem('pnkSesionActiva', 'true');
-                localStorage.setItem('pnkRolActivo', 'gestor');
-                localStorage.setItem('pnkUsuarioActivo', emailGestor);
-
-                if (!localStorage.getItem('pnkGestorEstado')) {
-                    localStorage.setItem('pnkGestorEstado', JSON.stringify({
-                        registrado: true,
-                        captoPropiedad: false,
-                        aprobado: false,
-                        penkaId: ''
-                    }));
-                }
-
-                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                if (loginModal) loginModal.hide();
-                document.getElementById('loginForm').reset();
-
-                window.location.href = 'pagina_gestor.html';
-                return;
-            }
-
-            alert('Credenciales incorrectas. Verifique su correo y contraseña.');
             const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
             if (loginModal) loginModal.hide();
             document.getElementById('loginForm').reset();
+            
+            // Redirecciones dinámicas inteligentes basadas en el instructivo 
+            if (email.toLowerCase() === 'ivan.araus@inacapmail.cl') {
+                localStorage.setItem('pnkRolActivo', 'propietario');
+                window.location.href = 'pagina_propietario.html';
+            } else if (email.toLowerCase() === 'mosiah.riveros@inacapmail.cl') {
+                localStorage.setItem('pnkRolActivo', 'gestor');
+                window.location.href = 'pagina_gestor.html';
+            } else {
+                localStorage.setItem('pnkRolActivo', 'admin');
+                window.location.href = 'dashboard.php';
+            }
+        } else {
+            Swal.fire('Error','Credenciales incorrectas o usuario inactivo.','error');
         }
+    }).catch(() => Swal.fire('Error','Error de red al conectar con auth.php','error'));
+}
 
         function enviarRecuperacionContrasena() {
             const correo = document.getElementById('recuperarEmail').value.trim();
@@ -1518,43 +1505,64 @@
             const sexo = document.getElementById('sexoRegistro').value;
             const telefono = document.getElementById('telefonoRegistro').value.trim();
             const propiedad = document.getElementById('propiedadRegistro').value.trim();
-            const certificado = document.getElementById('certificadoRegistro').value;
+            const certificadoInput = document.getElementById('certificadoRegistro');
+            const certificado = certificadoInput.files && certificadoInput.files[0] ? certificadoInput.files[0] : null;
 
             if (!rol) {
-                alert('Seleccione propietario o gestor antes de continuar.');
+                Swal.fire('Atención', 'Seleccione propietario o gestor antes de continuar.', 'warning');
                 return;
             }
             if (!rut || !nombre || !nacimiento || !correo || !contrasena || !sexo || !telefono) {
-                alert('Complete todos los campos requeridos.');
+                Swal.fire('Atención', 'Complete todos los campos requeridos.', 'warning');
                 return;
             }
 
             if (rol === 'propietario' && !propiedad) {
-                alert('Ingrese el N° de la propiedad según registro de Bienes Raíces.');
+                Swal.fire('Atención', 'Ingrese el N° de la propiedad según registro de Bienes Raíces.', 'warning');
                 return;
             }
 
             if (rol === 'gestor' && !certificado) {
-                alert('Adjunte el certificado de antecedentes.');
+                Swal.fire('Atención', 'Adjunte el certificado de antecedentes.', 'warning');
                 return;
             }
 
-            if (rol === 'gestor' && correo.toLowerCase() === 'mosiah.riveros@inacapmail.cl' && contrasena === '12345') {
-                localStorage.setItem('pnkGestorEstado', JSON.stringify({
-                    registrado: true,
-                    captoPropiedad: false,
-                    aprobado: false,
-                    penkaId: ''
-                }));
-
-                alert('Registro de Gestor Inmobiliario Free completado.\n\nAcciones para generar ingresos adicionales:\n1. Registrarse como Gestor Inmobiliario\n2. Captar una propiedad para la comunidad\n3. Una vez aceptado, recibirá su PENKA_ID para ofertar inmuebles y comisionar por ventas gestionadas.');
-            } else {
-                alert(`Registro exitoso como ${rol}.\nRut: ${rut}\nNombre: ${nombre}`);
+            const fd = new FormData();
+            fd.append('register', '1');
+            fd.append('rut', rut);
+            fd.append('nombre', nombre);
+            fd.append('fecha_nacimiento', nacimiento);
+            fd.append('correo', correo);
+            fd.append('password', contrasena);
+            fd.append('sexo', sexo);
+            fd.append('telefono', telefono);
+            if (certificado) {
+                fd.append('certificado', certificado);
             }
-            const registroModal = bootstrap.Modal.getInstance(document.getElementById('registroModal'));
-            if (registroModal) registroModal.hide();
-            document.getElementById('registroForm').reset();
-            setRolRegistro('');
+
+            fetch('php/auth.php', {
+                method: 'POST',
+                body: fd
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === 'success') {
+                        Swal.fire('Éxito', `Registro exitoso como ${rol}.`, 'success');
+                        const registroModal = bootstrap.Modal.getInstance(document.getElementById('registroModal'));
+                        if (registroModal) registroModal.hide();
+                        document.getElementById('registroForm').reset();
+                        setRolRegistro('');
+                        return;
+                    }
+
+                    if (data.reason === 'user_exists') {
+                        Swal.fire('Error', 'El correo o RUT ya está registrado.', 'error');
+                        return;
+                    }
+
+                    Swal.fire('Error', 'No se pudo registrar el usuario.', 'error');
+                })
+                .catch(() => Swal.fire('Error', 'Error de red', 'error'));
         }
     </script>
 </body>
