@@ -1,14 +1,16 @@
-<?php
-$DB_HOST = 'localhost';
-$DB_USER = 'usuarioEmpresa';
-$DB_PASS = 'usuarioEmpresa';
-$DB_NAME = 'PNK_INMOBILIARIA';
+<?php 
+$server='localhost';
+$bd = 'PNK_INMOBILIARIA';
+$user='usuarioEmpresa';
+$pass='usuarioEmpresa';
 
-$conn = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);
+$conn =@mysqli_connect($server,$user,$pass,$bd);
+
 if (!$conn) {
-    http_response_code(500);
-    echo 'Error de conexión a la base de datos.';
-    exit;
+    echo "Error: ".mysqli_connect_error()."------";
+    exit();
 }
 
-mysqli_set_charset($conn, 'utf8mb4');
+//echo "<div class='alert alert-success'>Conexión exitosa!</div>";
+
+?>

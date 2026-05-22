@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar - Inmobiliaria PNK</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --wine: #722f37;
+            --wine-dark: #5a1f26;
+            --paper: #fbf6f2;
+            --line: #ead8cf;
+            --text: #3d312b;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 15%, rgba(114, 47, 55, 0.12), transparent 28%),
+                radial-gradient(circle at 85% 20%, rgba(174, 121, 87, 0.14), transparent 25%),
+                linear-gradient(160deg, #f6efe9 0%, #efe6de 100%);
+        }
+
+        .topbar {
+            background: rgba(255,255,255,0.82);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(8px);
+        }
+
+        .brand {
+            color: var(--wine) !important;
+            font-weight: 800;
+        }
+
+        .hero {
+            border-radius: 22px;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--wine) 0%, #9a5b64 100%);
+            color: #fff;
+            box-shadow: 0 16px 30px rgba(114, 47, 55, 0.18);
+        }
+
+        .panel {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 10px 24px rgba(67, 44, 29, 0.08);
+        }
+
+        .panel .card-header {
+            background: #fff6f2;
+            border-bottom: 1px solid var(--line);
+            color: var(--wine);
+            font-weight: 700;
+        }
+
+        .btn-wine {
+            background: var(--wine);
+            border-color: var(--wine);
+            color: #fff;
+        }
+
+        .btn-wine:hover {
+            background: var(--wine-dark);
+            border-color: var(--wine-dark);
+            color: #fff;
+        }
+
+        .table thead th {
+            background: #faf2ee;
+            color: var(--wine);
+            white-space: nowrap;
+        }
+
+        .table td,
+        .table th {
+            vertical-align: middle;
+        }
+
+        .thumb {
+            width: 64px;
+            height: 44px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e3d8d0;
+            background: #fff;
+        }
+
+        .content-hidden {
+            display: none;
+        }
+
+        .count-badge {
+            background: rgba(255,255,255,0.16);
+            border: 1px solid rgba(255,255,255,0.22);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid px-3">
+                <a class="navbar-brand brand" href="pagina_admin.html">Inmobiliaria PNK</a>
+                <div class="ms-auto d-flex gap-2 align-items-center">
+                    <span class="badge count-badge" id="sessionBadge">Acceso pendiente</span>
+                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="cerrarSesion()">Cerrar sesión</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4">
+        <section class="hero mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div>
+                    <h1 class="h3 mb-2">Administrar usuarios y propiedades</h1>
+                    <p class="mb-0">Primero se cargan las propiedades de la base de datos y debajo el listado de usuarios.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="badge count-badge">Propiedades: <span id="countPropiedades">0</span></span>
+                    <span class="badge count-badge">Usuarios: <span id="countUsuarios">0</span></span>
+                </div>
+            </div>
+        </section>
+
+        <section id="adminContent" class="content-hidden">
+            <div class="card panel mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <span>Propiedades registradas</span>
+                    <a class="btn btn-outline-secondary btn-sm" href="php/crud_propiedades.php">Abrir mantenedor</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tipo</th>
+                                    <th>Provincia</th>
+                                    <th>Comuna</th>
+                                    <th>Sector</th>
+                                    <th>Precio CLP</th>
+                                    <th>Foto</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaPropiedades"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card panel mb-4">
+                <div class="card-header">Usuarios registrados</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>RUT</th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Sexo</th>
+                                    <th>Teléfono</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaUsuarios"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminLoginModalLabel">Reingresar credenciales</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="adminLoginForm">
+                        <div class="mb-3">
+                            <label for="adminUser" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="adminUser" autocomplete="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminPass" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="adminPass" autocomplete="current-password" required>
+                        </div>
+                    </form>
+                    <p class="small text-muted mb-0">Use las credenciales de administrador para acceder al panel.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-wine" onclick="confirmarLoginAdmin()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        let adminAutenticado = false;
+
+        function abrirModalLogin() {
+            const modal = new bootstrap.Modal(document.getElementById('adminLoginModal'), { backdrop: 'static', keyboard: false });
+            modal.show();
+        }
+
+        function mostrarContenido() {
+            document.getElementById('adminContent').classList.remove('content-hidden');
+            document.getElementById('sessionBadge').textContent = 'Admin activo';
+        }
+
+        function cerrarSesion() {
+            if (!confirm('¿Desea cerrar la sesión de administrador?')) {
+                return;
+            }
+            localStorage.removeItem('pnkAdminAccess');
+            localStorage.removeItem('pnkSesionActiva');
+            localStorage.removeItem('pnkUsuarioActivo');
+            localStorage.removeItem('pnkRolActivo');
+            window.location.href = 'pagina_admin.html';
+        }
+
+        function confirmarLoginAdmin() {
+            const usuario = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+
+            if (!usuario || !pass) {
+                Swal.fire('Atención', 'Ingrese usuario y contraseña.', 'warning');
+                return;
+            }
+
+            const fd = new FormData();
+            fd.append('login_admin', '1');
+            fd.append('usuario', usuario);
+            fd.append('password', pass);
+
+            fetch('php/auth.php', { method: 'POST', body: fd, credentials: 'same-origin' })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === 'success') {
+                        localStorage.setItem('pnkAdminAccess', 'true');
+                        localStorage.setItem('pnkSesionActiva', 'true');
+                        localStorage.setItem('pnkUsuarioActivo', usuario);
+                        localStorage.setItem('pnkRolActivo', 'admin');
+                        adminAutenticado = true;
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('adminLoginModal'));
+                        if (modal) modal.hide();
+                        mostrarContenido();
+                        cargarDatos();
+                    } else {
+                        Swal.fire('Error', 'Credenciales inválidas.', 'error');
+                    }
+                })
+                .catch(() => Swal.fire('Error', 'No se pudo validar el acceso.', 'error'));
+        }
+
+        function formatearNumero(valor) {
+            const numero = Number(valor || 0);
+            return numero.toLocaleString('es-CL');
+        }
+
+        function renderPropiedades(items) {
+            const tbody = document.getElementById('tablaPropiedades');
+            tbody.innerHTML = '';
+            document.getElementById('countPropiedades').textContent = items.length;
+
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No hay propiedades registradas.</td></tr>';
+                return;
+            }
+
+            items.forEach((item) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.id ?? ''}</td>
+                    <td>${item.tipo_propiedad ?? ''}</td>
+                    <td>${item.provincia ?? ''}</td>
+                    <td>${item.comuna ?? ''}</td>
+                    <td>${item.sector ?? ''}</td>
+                    <td>$${formatearNumero(item.precio_clp)}</td>
+                    <td><img class="thumb" src="uploads/properties/${item.foto_url || 'casa1.webp'}" alt="Foto propiedad"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderUsuarios(items) {
+            const tbody = document.getElementById('tablaUsuarios');
+            tbody.innerHTML = '';
+            document.getElementById('countUsuarios').textContent = items.length;
+
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No hay usuarios registrados.</td></tr>';
+                return;
+            }
+
+            items.forEach((item) => {
+                const estado = Number(item.estado) === 1 ? 'Activo' : 'Inactivo';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.id ?? ''}</td>
+                    <td>${item.rut ?? ''}</td>
+                    <td>${item.nombre ?? ''}</td>
+                    <td>${item.correo ?? ''}</td>
+                    <td>${item.sexo ?? ''}</td>
+                    <td>${item.telefono ?? ''}</td>
+                    <td>${estado}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function cargarDatos() {
+            Promise.all([
+                fetch('php/search_propiedades.php', { credentials: 'same-origin' }).then((response) => response.json()),
+                fetch('php/listar_usuarios.php', { credentials: 'same-origin' }).then((response) => response.json())
+            ])
+                .then(([propiedades, usuarios]) => {
+                    renderPropiedades(Array.isArray(propiedades) ? propiedades : []);
+                    renderUsuarios(Array.isArray(usuarios) ? usuarios : []);
+                })
+                .catch(() => {
+                    Swal.fire('Error', 'No se pudieron cargar las tablas.', 'error');
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            abrirModalLogin();
+        });
+    </script>
+</body>
+</html>

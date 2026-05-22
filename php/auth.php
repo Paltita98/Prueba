@@ -6,7 +6,6 @@ $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => $_SERVER['HTTP_HOST'] ?? '',
     'secure' => $secure,
     'httponly' => true,
     'samesite' => 'Strict'
@@ -14,6 +13,9 @@ session_set_cookie_params([
 session_start();
 
 header('Content-Type: application/json; charset=utf-8');
+
+const ADMIN_USER = 'Admin';
+const ADMIN_PASS = 'SoyelAdmin123@';
 
 function registrarUsuario($conn, array $datos) {
     $rut = trim($datos['rut'] ?? '');
@@ -121,6 +123,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         $_SESSION['id'] = $id;
         $_SESSION['nombre'] = $nombre;
         echo json_encode(['status' => 'success', 'role' => 'usuario']);
+    } else {
+        echo json_encode(['status' => 'denied']);
+    }
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_admin'])) {
+    $usuario = trim($_POST['usuario'] ?? '');
+    $pass = $_POST['password'] ?? '';
+
+    if ($usuario === ADMIN_USER && $pass === ADMIN_PASS) {
+        session_regenerate_id(true);
+        $_SESSION['id'] = 999999;
+        $_SESSION['nombre'] = ADMIN_USER;
+        $_SESSION['rol'] = 'admin';
+        echo json_encode(['status' => 'success', 'role' => 'admin']);
     } else {
         echo json_encode(['status' => 'denied']);
     }

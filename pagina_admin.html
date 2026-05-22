@@ -142,25 +142,12 @@
             background-color: #f9f3f1;
         }
 
-        .badge-owner {
-            background: #0d6efd;
-        }
+        .badge-owner { background: #0d6efd; }
+        .badge-manager { background: #198754; }
+        .badge-active { background: #28a745; }
+        .badge-inactive { background: #dc3545; }
 
-        .badge-manager {
-            background: #198754;
-        }
-
-        .badge-active {
-            background: #28a745;
-        }
-
-        .badge-inactive {
-            background: #dc3545;
-        }
-
-        .btn-group-sm {
-            gap: 5px;
-        }
+        .btn-group-sm { gap: 5px; }
 
         .form-section {
             background: white;
@@ -226,7 +213,6 @@
             border: 1px solid #e0e0e0;
             background: #f8f9fa;
         }
-
     </style>
 </head>
 <body>
@@ -264,164 +250,71 @@
                 </div>
 
                 <nav class="sidebar nav flex-column" aria-label="Navegación del panel administrativo">
-                    <a class="nav-link active" href="#dashboard" onclick="mostrarSeccion('dashboard', event);">
-                        📊 Dashboard
-                    </a>
-                    <a class="nav-link" href="#" onclick="abrirCrudPropiedades(event)">
-                        🏘️ Administrar Propiedades
-                    </a>
-                    <a class="nav-link" href="#duenos" onclick="mostrarSeccion('duenos', event);">
-                        👤 Dueños de Inmuebles
-                    </a>
-                    <a class="nav-link" href="#gestores" onclick="mostrarSeccion('gestores', event);">
-                        💼 Gestores Inmobiliarios
-                    </a>
-                    <a class="nav-link" href="#publicaciones" onclick="mostrarSeccion('publicaciones', event);">
-                        📢 Publicaciones de Avisos
-                    </a>
+                    <a class="nav-link active" href="#dashboard" onclick="mostrarSeccion('dashboard', event);">📊 Dashboard</a>
+                    <a class="nav-link" href="Administrar.html">🏘️ Administrar Propiedades</a>
+                    <a class="nav-link" href="#duenos" onclick="mostrarSeccion('duenos', event);">👤 Dueños de Inmuebles</a>
+                    <a class="nav-link" href="#gestores" onclick="mostrarSeccion('gestores', event);">💼 Gestores Inmobiliarios</a>
+                    <a class="nav-link" href="#publicaciones" onclick="mostrarSeccion('publicaciones', event);">📢 Publicaciones de Avisos</a>
                 </nav>
             </aside>
 
-            <!-- CONTENIDO PRINCIPAL -->
             <section class="col-lg-10" aria-labelledby="dashboard-heading">
-                <!-- DASHBOARD -->
                 <section id="dashboard" class="content-section active" aria-labelledby="dashboard-heading">
                     <h2 id="dashboard-heading" class="visually-hidden">Dashboard administrativo</h2>
                     <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="stats-card">
-                                <h3 id="totalDuenos">12</h3>
-                                <p>Dueños de Inmuebles</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card">
-                                <h3 id="totalGestores">8</h3>
-                                <p>Gestores Inmobiliarios</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card">
-                                <h3 id="totalPublicaciones">45</h3>
-                                <p>Publicaciones Activas</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card">
-                                <h3 id="totalUsuarios">20</h3>
-                                <p>Usuarios Activos</p>
-                            </div>
-                        </div>
+                        <div class="col-md-3"><div class="stats-card"><h3 id="totalDuenos">12</h3><p>Dueños de Inmuebles</p></div></div>
+                        <div class="col-md-3"><div class="stats-card"><h3 id="totalGestores">8</h3><p>Gestores Inmobiliarios</p></div></div>
+                        <div class="col-md-3"><div class="stats-card"><h3 id="totalPublicaciones">45</h3><p>Publicaciones Activas</p></div></div>
+                        <div class="col-md-3"><div class="stats-card"><h3 id="totalUsuarios">20</h3><p>Usuarios Activos</p></div></div>
                     </div>
-
                     <div class="card">
-                        <div class="card-header">
-                            <h5>Actividad Reciente</h5>
-                        </div>
+                        <div class="card-header"><h5>Actividad Reciente</h5></div>
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    <strong>Nuevo Dueño:</strong> Carlos Müller registrado - <span class="text-muted">Hace 2 horas</span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Nueva Publicación:</strong> Casa en Providencia - <span class="text-muted">Hace 4 horas</span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Gestor Activado:</strong> Andrea Valdez habilitada - <span class="text-muted">Hace 1 día</span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Usuario Eliminado:</strong> Dueño "Roberto Silva" dado de baja - <span class="text-muted">Hace 3 días</span>
-                                </li>
+                                <li class="list-group-item"><strong>Nuevo Dueño:</strong> Carlos Müller registrado - <span class="text-muted">Hace 2 horas</span></li>
+                                <li class="list-group-item"><strong>Nueva Publicación:</strong> Casa en Providencia - <span class="text-muted">Hace 4 horas</span></li>
+                                <li class="list-group-item"><strong>Gestor Activado:</strong> Andrea Valdez habilitada - <span class="text-muted">Hace 1 día</span></li>
+                                <li class="list-group-item"><strong>Usuario Eliminado:</strong> Dueño "Roberto Silva" dado de baja - <span class="text-muted">Hace 3 días</span></li>
                             </ul>
                         </div>
                     </div>
-
                     <div class="card mt-4">
-                        <div class="card-header">
-                            <h5>Gestión de Inmuebles</h5>
-                        </div>
+                        <div class="card-header"><h5>Gestión de Inmuebles</h5></div>
                         <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                             <div>
                                 <p class="mb-1 fw-semibold">Acceso directo al CRUD de propiedades</p>
                                 <p class="mb-0 text-muted">Desde aquí puedes insertar, editar y eliminar inmuebles registrados en la base de datos.</p>
                             </div>
-                            <button type="button" class="btn btn-wine btn-lg" onclick="abrirCrudPropiedades(event)">Administrar Propiedades</button>
+                            <a class="btn btn-wine btn-lg" href="Administrar.html">Administrar Propiedades</a>
                         </div>
                     </div>
                 </section>
 
-                <!-- GESTIÓN DE DUEÑOS -->
                 <div id="duenos" class="content-section">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-section">
                                 <h5 class="mb-3">Registrar Nuevo Dueño</h5>
                                 <form id="formDueno">
-                                    <div class="mb-3">
-                                        <label for="rutDueno" class="form-label">RUT</label>
-                                        <input type="text" class="form-control" id="rutDueno" placeholder="12.345.678-9" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nombreDueno" class="form-label">Nombre Completo</label>
-                                        <input type="text" class="form-control" id="nombreDueno" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="emailDueno" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="emailDueno" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="telefonoDueno" class="form-label">Teléfono</label>
-                                        <input type="tel" class="form-control" id="telefonoDueno" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="direccionDueno" class="form-label">Dirección</label>
-                                        <input type="text" class="form-control" id="direccionDueno" required>
-                                    </div>
+                                    <div class="mb-3"><label for="rutDueno" class="form-label">RUT</label><input type="text" class="form-control" id="rutDueno" placeholder="12.345.678-9" required></div>
+                                    <div class="mb-3"><label for="nombreDueno" class="form-label">Nombre Completo</label><input type="text" class="form-control" id="nombreDueno" required></div>
+                                    <div class="mb-3"><label for="emailDueno" class="form-label">Email</label><input type="email" class="form-control" id="emailDueno" required></div>
+                                    <div class="mb-3"><label for="telefonoDueno" class="form-label">Teléfono</label><input type="tel" class="form-control" id="telefonoDueno" required></div>
+                                    <div class="mb-3"><label for="direccionDueno" class="form-label">Dirección</label><input type="text" class="form-control" id="direccionDueno" required></div>
                                     <button type="submit" class="btn btn-wine w-100">Registrar Dueño</button>
                                 </form>
                             </div>
                         </div>
                         <div class="col-md-8">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5>Dueños Registrados</h5>
-                                </div>
+                                <div class="card-header"><h5>Dueños Registrados</h5></div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-hover">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>RUT</th>
-                                                    <th>Nombre</th>
-                                                    <th>Email</th>
-                                                    <th>Teléfono</th>
-                                                    <th>Estado</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
+                                            <thead class="table-light"><tr><th>RUT</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>Acciones</th></tr></thead>
                                             <tbody id="tablaDuenos">
-                                                <tr>
-                                                    <td>12.345.678-9</td>
-                                                    <td>Juan García</td>
-                                                    <td>juan@email.com</td>
-                                                    <td>+56 9 1234 5678</td>
-                                                    <td><span class="badge bg-success">Activo</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-secondary" onclick="editarDueno(this)">Editar</button>
-                                                        <button class="btn btn-sm btn-danger" onclick="eliminarDueno(this)">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                                <tr class="table-warning">
-                                                    <td>11.234.567-8</td>
-                                                    <td>María López</td>
-                                                    <td>maria@email.com</td>
-                                                    <td>+56 9 9876 5432</td>
-                                                    <td><span class="badge bg-warning text-dark">Pendiente</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-success" onclick="aceptarDueno(this)">Aceptar</button>
-                                                        <button class="btn btn-sm btn-danger" onclick="rechazarDueno(this)">Rechazar</button>
-                                                    </td>
-                                                </tr>
+                                                <tr><td>12.345.678-9</td><td>Juan García</td><td>juan@email.com</td><td>+56 9 1234 5678</td><td><span class="badge bg-success">Activo</span></td><td><button class="btn btn-sm btn-secondary" onclick="editarDueno(this)">Editar</button> <button class="btn btn-sm btn-danger" onclick="eliminarDueno(this)">Eliminar</button></td></tr>
+                                                <tr class="table-warning"><td>11.234.567-8</td><td>María López</td><td>maria@email.com</td><td>+56 9 9876 5432</td><td><span class="badge bg-warning text-dark">Pendiente</span></td><td><button class="btn btn-sm btn-success" onclick="aceptarDueno(this)">Aceptar</button> <button class="btn btn-sm btn-danger" onclick="rechazarDueno(this)">Rechazar</button></td></tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -431,87 +324,31 @@
                     </div>
                 </div>
 
-                <!-- GESTIÓN DE GESTORES -->
                 <div id="gestores" class="content-section">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-section">
                                 <h5 class="mb-3">Registrar Nuevo Gestor</h5>
                                 <form id="formGestor">
-                                    <div class="mb-3">
-                                        <label for="rutGestor" class="form-label">RUT</label>
-                                        <input type="text" class="form-control" id="rutGestor" placeholder="12.345.678-9" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nombreGestor" class="form-label">Nombre Completo</label>
-                                        <input type="text" class="form-control" id="nombreGestor" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="emailGestor" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="emailGestor" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="telefonoGestor" class="form-label">Teléfono</label>
-                                        <input type="tel" class="form-control" id="telefonoGestor" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="especilidadGestor" class="form-label">Especialidad</label>
-                                        <select class="form-select" id="especilidadGestor" required>
-                                            <option value="">Seleccionar...</option>
-                                            <option>Casas</option>
-                                            <option>Departamentos</option>
-                                            <option>Terrenos</option>
-                                            <option>Completo</option>
-                                        </select>
-                                    </div>
+                                    <div class="mb-3"><label for="rutGestor" class="form-label">RUT</label><input type="text" class="form-control" id="rutGestor" placeholder="12.345.678-9" required></div>
+                                    <div class="mb-3"><label for="nombreGestor" class="form-label">Nombre Completo</label><input type="text" class="form-control" id="nombreGestor" required></div>
+                                    <div class="mb-3"><label for="emailGestor" class="form-label">Email</label><input type="email" class="form-control" id="emailGestor" required></div>
+                                    <div class="mb-3"><label for="telefonoGestor" class="form-label">Teléfono</label><input type="tel" class="form-control" id="telefonoGestor" required></div>
+                                    <div class="mb-3"><label for="especilidadGestor" class="form-label">Especialidad</label><select class="form-select" id="especilidadGestor" required><option value="">Seleccionar...</option><option>Casas</option><option>Departamentos</option><option>Terrenos</option><option>Completo</option></select></div>
                                     <button type="submit" class="btn btn-wine w-100">Registrar Gestor</button>
                                 </form>
                             </div>
                         </div>
                         <div class="col-md-8">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5>Gestores Inmobiliarios Free</h5>
-                                </div>
+                                <div class="card-header"><h5>Gestores Inmobiliarios Free</h5></div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-hover">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>PENKA_ID</th>
-                                                    <th>RUT</th>
-                                                    <th>Nombre</th>
-                                                    <th>Email</th>
-                                                    <th>Especialidad</th>
-                                                    <th>Estado</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
+                                            <thead class="table-light"><tr><th>PENKA_ID</th><th>RUT</th><th>Nombre</th><th>Email</th><th>Especialidad</th><th>Estado</th><th>Acciones</th></tr></thead>
                                             <tbody id="tablaGestores">
-                                                <tr>
-                                                    <td><strong>PNK-1042</strong></td>
-                                                    <td>15.456.789-0</td>
-                                                    <td>David Contreras</td>
-                                                    <td>david@email.com</td>
-                                                    <td>Casas y Departamentos</td>
-                                                    <td><span class="badge bg-success">Activo</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-secondary" onclick="editarGestor(this)">Editar</button>
-                                                        <button class="btn btn-sm btn-danger" onclick="eliminarGestor(this)">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span class="text-muted fst-italic">Por asignar</span></td>
-                                                    <td>14.678.901-2</td>
-                                                    <td>Andrea Valdez</td>
-                                                    <td>andrea@email.com</td>
-                                                    <td>Terrenos</td>
-                                                    <td><span class="badge bg-warning">Pendiente</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-success" onclick="aceptarGestor(this)">Aceptar</button>
-                                                        <button class="btn btn-sm btn-danger" onclick="rechazarGestor(this)">Rechazar</button>
-                                                    </td>
-                                                </tr>
+                                                <tr><td><strong>PNK-1042</strong></td><td>15.456.789-0</td><td>David Contreras</td><td>david@email.com</td><td>Casas y Departamentos</td><td><span class="badge bg-success">Activo</span></td><td><button class="btn btn-sm btn-secondary" onclick="editarGestor(this)">Editar</button> <button class="btn btn-sm btn-danger" onclick="eliminarGestor(this)">Eliminar</button></td></tr>
+                                                <tr><td><span class="text-muted fst-italic">Por asignar</span></td><td>14.678.901-2</td><td>Andrea Valdez</td><td>andrea@email.com</td><td>Terrenos</td><td><span class="badge bg-warning">Pendiente</span></td><td><button class="btn btn-sm btn-success" onclick="aceptarGestor(this)">Aceptar</button> <button class="btn btn-sm btn-danger" onclick="rechazarGestor(this)">Rechazar</button></td></tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -521,98 +358,32 @@
                     </div>
                 </div>
 
-                <!-- GESTIÓN DE PUBLICACIONES -->
                 <div id="publicaciones" class="content-section">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-section">
                                 <h5 class="mb-3">Nueva Publicación</h5>
                                 <form id="formPublicacion">
-                                    <div class="mb-3">
-                                        <label for="tipoPropiedad" class="form-label">Tipo de Propiedad</label>
-                                        <select class="form-select" id="tipoPropiedad" required>
-                                            <option value="">Seleccionar...</option>
-                                            <option>Casa</option>
-                                            <option>Departamento</option>
-                                            <option>Terreno</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="direccion" class="form-label">Dirección</label>
-                                        <input type="text" class="form-control" id="direccion" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="comuna" class="form-label">Comuna</label>
-                                        <input type="text" class="form-control" id="comuna" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="precio" class="form-label">Precio (UF)</label>
-                                        <input type="number" class="form-control" id="precio" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="descripcion" class="form-label">Descripción</label>
-                                        <textarea class="form-control" id="descripcion" rows="3" required></textarea>
-                                    </div>
+                                    <div class="mb-3"><label for="tipoPropiedad" class="form-label">Tipo de Propiedad</label><select class="form-select" id="tipoPropiedad" required><option value="">Seleccionar...</option><option>Casa</option><option>Departamento</option><option>Terreno</option></select></div>
+                                    <div class="mb-3"><label for="direccion" class="form-label">Dirección</label><input type="text" class="form-control" id="direccion" required></div>
+                                    <div class="mb-3"><label for="comuna" class="form-label">Comuna</label><input type="text" class="form-control" id="comuna" required></div>
+                                    <div class="mb-3"><label for="precio" class="form-label">Precio (UF)</label><input type="number" class="form-control" id="precio" required></div>
+                                    <div class="mb-3"><label for="descripcion" class="form-label">Descripción</label><textarea class="form-control" id="descripcion" rows="3" required></textarea></div>
                                     <button type="submit" class="btn btn-wine w-100">Publicar Aviso</button>
                                 </form>
                             </div>
                         </div>
                         <div class="col-md-8">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5>Avisos Publicados</h5>
-                                </div>
+                                <div class="card-header"><h5>Avisos Publicados</h5></div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-hover">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Dirección</th>
-                                                    <th>Tipo</th>
-                                                    <th>Comuna</th>
-                                                    <th>Precio (UF)</th>
-                                                    <th>Estado</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
+                                            <thead class="table-light"><tr><th>ID</th><th>Dirección</th><th>Tipo</th><th>Comuna</th><th>Precio (UF)</th><th>Estado</th><th>Acciones</th></tr></thead>
                                             <tbody id="tablaPublicaciones">
-                                                <tr>
-                                                    <td>#001</td>
-                                                    <td>Av. Providencia 1500</td>
-                                                    <td>Casa</td>
-                                                    <td>Providencia</td>
-                                                    <td>2,500</td>
-                                                    <td><span class="badge badge-active">Publicado</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>#002</td>
-                                                    <td>Las Condes 2000</td>
-                                                    <td>Departamento</td>
-                                                    <td>Las Condes</td>
-                                                    <td>1,800</td>
-                                                    <td><span class="badge badge-active">Publicado</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>#003</td>
-                                                    <td>Ñuñoa 3500</td>
-                                                    <td>Terreno</td>
-                                                    <td>Ñuñoa</td>
-                                                    <td>900</td>
-                                                    <td><span class="badge badge-active">Publicado</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button>
-                                                    </td>
-                                                </tr>
+                                                <tr><td>#001</td><td>Av. Providencia 1500</td><td>Casa</td><td>Providencia</td><td>2,500</td><td><span class="badge badge-active">Publicado</span></td><td><button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button> <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button></td></tr>
+                                                <tr><td>#002</td><td>Las Condes 2000</td><td>Departamento</td><td>Las Condes</td><td>1,800</td><td><span class="badge badge-active">Publicado</span></td><td><button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button> <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button></td></tr>
+                                                <tr><td>#003</td><td>Ñuñoa 3500</td><td>Terreno</td><td>Ñuñoa</td><td>900</td><td><span class="badge badge-active">Publicado</span></td><td><button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button> <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button></td></tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -621,9 +392,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
         </div>
     </main>
 
@@ -637,568 +406,18 @@
         </div>
     </footer>
 
-    <div class="modal fade" id="crudPropiedadesModal" tabindex="-1" aria-labelledby="crudPropiedadesModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="crudPropiedadesModalLabel">Administrar Propiedades</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-lg-5">
-                            <div class="form-section h-100 mb-0">
-                                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
-                                    <h5 class="mb-0">Formulario de Propiedad</h5>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFormularioPropiedadAdmin()">Nueva</button>
-                                </div>
-                                <form id="formPropiedadAdmin" class="row g-2" enctype="multipart/form-data">
-                                    <input type="hidden" name="csrf" id="propAdminCsrf" value="">
-                                    <input type="hidden" name="accion" id="propAdminAccion" value="insertar">
-                                    <input type="hidden" name="id" id="propAdminId" value="">
-                                    <input type="hidden" name="current_foto_url" id="propAdminCurrentFoto" value="casa1.webp">
-
-                                    <div class="col-12">
-                                        <label class="form-label">Tipo de Propiedad</label>
-                                        <select name="tipo_propiedad" id="propAdminTipo" class="form-select" required>
-                                            <option value="">Seleccione</option>
-                                            <option value="Casa">Casa</option>
-                                            <option value="Departamento">Departamento</option>
-                                            <option value="Terreno">Terreno</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Fotografías (1 a 10)</label>
-                                        <input type="file" name="fotos[]" id="propAdminFotos" class="form-control" accept="image/*" multiple>
-                                        <small class="text-muted d-block mt-1">Si editas sin subir nuevas imágenes, se conserva la principal actual.</small>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Descripción</label>
-                                        <textarea name="descripcion" id="propAdminDescripcion" class="form-control" rows="3" required></textarea>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Baños</label>
-                                        <input name="banos" id="propAdminBanos" type="number" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Dormitorios</label>
-                                        <input name="dormitorios" id="propAdminDormitorios" type="number" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Área Total</label>
-                                        <input name="area_total" id="propAdminAreaTotal" type="number" step="0.01" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Área Construida</label>
-                                        <input name="area_construida" id="propAdminAreaConstruida" type="number" step="0.01" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Precio CLP</label>
-                                        <input name="precio_clp" id="propAdminPrecioCLP" type="number" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Precio UF</label>
-                                        <input name="precio_uf" id="propAdminPrecioUF" type="number" step="0.01" class="form-control" required readonly>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Fecha de Publicación</label>
-                                        <input name="fecha_publicacion" id="propAdminFecha" type="date" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Solicitar Visita</label>
-                                        <select name="solicitar_visita" id="propAdminVisita" class="form-select" required>
-                                            <option value="No">No</option>
-                                            <option value="Sí">Sí</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Bodega</label>
-                                        <select name="bodega" id="propAdminBodega" class="form-select" required>
-                                            <option value="No">No</option>
-                                            <option value="Sí">Sí</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Estacionamiento</label>
-                                        <select name="estacionamiento" id="propAdminEstacionamiento" class="form-select" required>
-                                            <option value="">Seleccione</option>
-                                            <option value="Sí">Sí</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Logia</label>
-                                        <select name="logia" id="propAdminLogia" class="form-select" required>
-                                            <option value="">Seleccione</option>
-                                            <option value="Sí">Sí</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Cocina Amoblada</label>
-                                        <select name="cocina_amoblada" id="propAdminCocina" class="form-select" required>
-                                            <option value="">Seleccione</option>
-                                            <option value="Sí">Sí</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Antejardín</label>
-                                        <select name="antejardin" id="propAdminAntejardin" class="form-select" required>
-                                            <option value="">Seleccione</option>
-                                            <option value="Sí">Sí</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Patio Trasero</label>
-                                        <select name="patio_trasero" id="propAdminPatio" class="form-select" required>
-                                            <option value="">Seleccione</option>
-                                            <option value="Sí">Sí</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Piscina</label>
-                                        <select name="piscina" id="propAdminPiscina" class="form-select" required>
-                                            <option value="">Seleccione</option>
-                                            <option value="Sí">Sí</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Provincia</label>
-                                        <input name="provincia" id="propAdminProvincia" type="text" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Comuna</label>
-                                        <input name="comuna" id="propAdminComuna" type="text" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Sector</label>
-                                        <input name="sector" id="propAdminSector" type="text" class="form-control" required>
-                                    </div>
-                                    <div class="col-12 d-flex gap-2 mt-3">
-                                        <button type="submit" class="btn btn-wine">Guardar Propiedad</button>
-                                        <button type="button" class="btn btn-outline-secondary" onclick="limpiarFormularioPropiedadAdmin()">Limpiar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-lg-7">
-                            <div class="card h-100">
-                                <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                    <h5 class="mb-0">Propiedades Registradas</h5>
-                                    <button type="button" class="btn btn-light btn-sm" onclick="cargarListadoPropiedadesAdmin()">Actualizar listado</button>
-                                </div>
-                                <div class="card-body">
-                                    <div id="propiedadesAdminAlerta" class="alert alert-light border mb-3">Aquí verás todas las propiedades guardadas en la base de datos.</div>
-                                    <div class="table-responsive" style="max-height: 68vh;">
-                                        <table class="table table-bordered table-hover align-middle">
-                                            <thead class="table-light sticky-top">
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Tipo</th>
-                                                    <th>Descripción</th>
-                                                    <th>Baños</th>
-                                                    <th>Dorm.</th>
-                                                    <th>Área Total</th>
-                                                    <th>Foto</th>
-                                                    <th>Precio</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tablaPropiedadesAdmin"></tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Confirmación -->
-    <div class="modal fade" id="modalConfirmar" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmar acción</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="modalMensaje">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="btnConfirmar" onclick="confirmarAccion()">Eliminar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/validaciones.js"></script>
     <script>
-        let accionPendiente = null;
-        let elementoSeleccionado = null;
-        let csrfAdminToken = '';
-
-        // Mostrar/ocultar secciones
         function mostrarSeccion(seccion, evt) {
-            // Ocultar todas las secciones
-            document.querySelectorAll('.content-section').forEach(el => {
-                el.classList.remove('active');
-            });
-
-            // Actualizar navegación
-            document.querySelectorAll('.sidebar .nav-link').forEach(el => {
-                el.classList.remove('active');
-            });
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar .nav-link').forEach(el => el.classList.remove('active'));
             if (evt && evt.currentTarget) {
                 evt.currentTarget.classList.add('active');
             }
-
-            // Mostrar sección seleccionada
-            document.getElementById(seccion).classList.add('active');
-        }
-
-        function abrirCrudPropiedades(event) {
-            if (event) {
-                event.preventDefault();
-            }
-            const modal = new bootstrap.Modal(document.getElementById('crudPropiedadesModal'));
-            modal.show();
-            cargarCsrfAdmin();
-            cargarListadoPropiedadesAdmin();
-            limpiarFormularioPropiedadAdmin();
-        }
-
-        function toYesNoValue(value) {
-            if (value === true || value === 1 || value === '1') return 'Sí';
-            const normalized = String(value ?? '').trim().toLowerCase();
-            return ['sí', 'si', 'true', 'yes'].includes(normalized) ? 'Sí' : 'No';
-        }
-
-        function cargarCsrfAdmin() {
-            if (csrfAdminToken) {
-                document.getElementById('propAdminCsrf').value = csrfAdminToken;
-                return Promise.resolve(csrfAdminToken);
-            }
-
-            return fetch('php/csrf_token.php')
-                .then(r => r.json())
-                .then(resp => {
-                    if (resp.ok && resp.csrf) {
-                        csrfAdminToken = resp.csrf;
-                        document.getElementById('propAdminCsrf').value = csrfAdminToken;
-                    }
-                    return csrfAdminToken;
-                })
-                .catch(() => {
-                    document.getElementById('propAdminCsrf').value = '';
-                    return '';
-                });
-        }
-
-        function calcularPrecioUFAdmin() {
-            const clp = document.getElementById('propAdminPrecioCLP').value;
-            document.getElementById('propAdminPrecioUF').value = calcularUFFromCLP(clp);
-        }
-
-        function limpiarFormularioPropiedadAdmin() {
-            const form = document.getElementById('formPropiedadAdmin');
-            if (!form) return;
-            form.reset();
-            document.getElementById('propAdminAccion').value = 'insertar';
-            document.getElementById('propAdminId').value = '';
-            document.getElementById('propAdminCurrentFoto').value = 'casa1.webp';
-            document.getElementById('propAdminPrecioUF').value = '';
-            document.getElementById('propAdminFotos').value = '';
-            document.getElementById('propAdminTipo').focus();
-        }
-
-            function cargarPropiedadEnFormularioAdmin(propiedad) {
-            document.getElementById('propAdminAccion').value = 'modificar';
-            document.getElementById('propAdminId').value = propiedad.id || '';
-            document.getElementById('propAdminTipo').value = propiedad.tipo_propiedad || '';
-            document.getElementById('propAdminDescripcion').value = propiedad.descripcion || '';
-            document.getElementById('propAdminBanos').value = propiedad.banos || 0;
-            document.getElementById('propAdminDormitorios').value = propiedad.dormitorios || 0;
-            document.getElementById('propAdminAreaTotal').value = propiedad.area_total || '';
-            document.getElementById('propAdminAreaConstruida').value = propiedad.area_construida || '';
-            document.getElementById('propAdminPrecioCLP').value = propiedad.precio_clp || '';
-            document.getElementById('propAdminPrecioUF').value = propiedad.precio_uf || '';
-            document.getElementById('propAdminFecha').value = propiedad.fecha_publicacion ? String(propiedad.fecha_publicacion).split(' ')[0] : '';
-    
-    // Sincronizar el string exacto 'Sí' o 'No' con los elementos del modal
-            document.getElementById('propAdminVisita').value = toYesNoValue(propiedad.solicitar_visita);
-            document.getElementById('propAdminBodega').value = toYesNoValue(propiedad.bodega);
-            document.getElementById('propAdminEstacionamiento').value = toYesNoValue(propiedad.estacionamiento);
-            document.getElementById('propAdminLogia').value = toYesNoValue(propiedad.logia);
-            document.getElementById('propAdminCocina').value = toYesNoValue(propiedad.cocina_amoblada);
-            document.getElementById('propAdminAntejardin').value = toYesNoValue(propiedad.antejardin);
-            document.getElementById('propAdminPatio').value = toYesNoValue(propiedad.patio_trasero);
-            document.getElementById('propAdminPiscina').value = toYesNoValue(propiedad.piscina);
-    
-            document.getElementById('propAdminProvincia').value = propiedad.provincia || '';
-            document.getElementById('propAdminComuna').value = propiedad.comuna || '';
-            document.getElementById('propAdminSector').value = propiedad.sector || '';
-            document.getElementById('propAdminCurrentFoto').value = propiedad.foto_url || 'casa1.webp';
-            document.getElementById('propAdminFotos').value = '';
-            document.getElementById('propAdminTipo').focus();
-        }
-
-        function cargarListadoPropiedadesAdmin() {
-            const tbody = document.getElementById('tablaPropiedadesAdmin');
-            const alerta = document.getElementById('propiedadesAdminAlerta');
-            if (!tbody || !alerta) return;
-
-            fetch('php/search_propiedades.php')
-                .then(r => r.json())
-                .then(data => {
-                    tbody.innerHTML = '';
-                    if (!Array.isArray(data) || data.length === 0) {
-                        alerta.className = 'alert alert-secondary border mb-3';
-                        alerta.textContent = 'No hay propiedades registradas todavía.';
-                        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">Sin registros</td></tr>';
-                        return;
-                    }
-
-                    alerta.className = 'alert alert-success border mb-3';
-                    alerta.textContent = `Se encontraron ${data.length} propiedades registradas.`;
-                    data.forEach(propiedad => {
-                        const row = document.createElement('tr');
-                        const foto = propiedad.foto_url ? `uploads/properties/${propiedad.foto_url}` : 'img/casa1.webp';
-                        const propData = encodeURIComponent(JSON.stringify(propiedad));
-                        row.innerHTML = `
-                            <td>${propiedad.id}</td>
-                            <td>${propiedad.tipo_propiedad || ''}</td>
-                            <td>${propiedad.descripcion || ''}</td>
-                            <td>${propiedad.banos ?? ''}</td>
-                            <td>${propiedad.dormitorios ?? ''}</td>
-                            <td>${propiedad.area_total ?? ''}</td>
-                            <td><img src="${foto}" alt="Foto propiedad" class="prop-thumbnail"></td>
-                            <td>$${Number(propiedad.precio_clp || 0).toLocaleString('es-CL')}</td>
-                            <td>
-                                <div class="d-flex flex-column gap-2">
-                                    <button type="button" class="btn btn-warning btn-sm">Editar</button>
-                                    <button type="button" class="btn btn-danger btn-sm">Eliminar</button>
-                                </div>
-                            </td>
-                        `;
-                        row.querySelector('.btn-warning').addEventListener('click', () => {
-                            cargarPropiedadEnFormularioAdmin(JSON.parse(decodeURIComponent(propData)));
-                        });
-                        row.querySelector('.btn-danger').addEventListener('click', () => {
-                            confirmarEliminarPropiedadAdmin(Number(propiedad.id));
-                        });
-                        tbody.appendChild(row);
-                    });
-                })
-                .catch(() => {
-                    alerta.className = 'alert alert-danger border mb-3';
-                    alerta.textContent = 'No se pudo cargar el listado de propiedades.';
-                });
-        }
-
-        function confirmarEliminarPropiedadAdmin(id) {
-            Swal.fire({
-                title: '¿Eliminar propiedad?',
-                text: 'Esta acción no se puede deshacer.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar'
-            }).then(result => {
-                if (!result.isConfirmed) return;
-                const csrf = document.getElementById('propAdminCsrf').value || csrfAdminToken || '';
-                fetch('php/crud_propiedades.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    body: new URLSearchParams({accion: 'eliminar', id: id, csrf: csrf})
-                })
-                .then(r => r.json())
-                .then(resp => {
-                    if (resp.ok) {
-                        Swal.fire('Eliminada', 'La propiedad fue eliminada', 'success');
-                        cargarListadoPropiedadesAdmin();
-                        limpiarFormularioPropiedadAdmin();
-                    } else {
-                        Swal.fire('Error', resp.error || 'No se pudo eliminar', 'error');
-                    }
-                })
-                .catch(() => Swal.fire('Error', 'Error de red', 'error'));
-            });
-        }
-
-        document.getElementById('crudPropiedadesModal')?.addEventListener('shown.bs.modal', () => {
-            cargarCsrfAdmin();
-            cargarListadoPropiedadesAdmin();
-        });
-
-        document.getElementById('propAdminPrecioCLP')?.addEventListener('input', calcularPrecioUFAdmin);
-        document.getElementById('formPropiedadAdmin')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const form = e.target;
-            if (!validarFormularioPropiedad(form)) return;
-            form.querySelector('[name="precio_uf"]').value = calcularUFFromCLP(form.querySelector('[name="precio_clp"]').value);
-            if (!form.querySelector('[name="csrf"]').value) {
-                await cargarCsrfAdmin();
-            }
-            const fd = new FormData(form);
-            fetch('php/crud_propiedades.php', { method: 'POST', body: fd })
-                .then(r => r.json())
-                .then(resp => {
-                    if (resp.ok) {
-                        Swal.fire('Guardado', 'Propiedad guardada correctamente', 'success');
-                        limpiarFormularioPropiedadAdmin();
-                        cargarListadoPropiedadesAdmin();
-                    } else {
-                        Swal.fire('Error', resp.error || 'No se pudo guardar', 'error');
-                    }
-                })
-                .catch(() => Swal.fire('Error', 'Error de red', 'error'));
-        });
-
-        // GESTIÓN DE DUEÑOS
-        document.getElementById('formDueno')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const rut = document.getElementById('rutDueno').value;
-            const nombre = document.getElementById('nombreDueno').value;
-            const email = document.getElementById('emailDueno').value;
-            const telefono = document.getElementById('telefonoDueno').value;
-            const direccion = document.getElementById('direccionDueno').value;
-
-            const nuevaFila = `<tr>
-                <td>${rut}</td>
-                <td>${nombre}</td>
-                <td>${email}</td>
-                <td>${telefono}</td>
-                <td><span class="badge badge-active">Activo</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="editarDueno(this)">Editar</button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarDueno(this)">Eliminar</button>
-                </td>
-            </tr>`;
-
-            document.getElementById('tablaDuenos').insertAdjacentHTML('beforeend', nuevaFila);
-            document.getElementById('totalDuenos').textContent = document.querySelectorAll('#tablaDuenos tr').length;
-            this.reset();
-            alert('Dueño registrado exitosamente');
-        });
-
-        // GESTIÓN DE GESTORES
-        document.getElementById('formGestor')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const rut = document.getElementById('rutGestor').value;
-            const nombre = document.getElementById('nombreGestor').value;
-            const email = document.getElementById('emailGestor').value;
-            const especialidad = document.getElementById('especilidadGestor').value;
-
-            const nuevaFila = `<tr>
-                <td>${rut}</td>
-                <td>${nombre}</td>
-                <td>${email}</td>
-                <td>${especialidad}</td>
-                <td><span class="badge badge-active">Habilitado</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick="habilitarGestor(this)">Habilitar</button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarGestor(this)">Eliminar</button>
-                </td>
-            </tr>`;
-
-            document.getElementById('tablaGestores').insertAdjacentHTML('beforeend', nuevaFila);
-            document.getElementById('totalGestores').textContent = document.querySelectorAll('#tablaGestores tr').length;
-            this.reset();
-            alert('Gestor registrado exitosamente');
-        });
-
-        // GESTIÓN DE PUBLICACIONES
-        document.getElementById('formPublicacion')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const tipo = document.getElementById('tipoPropiedad').value;
-            const direccion = document.getElementById('direccion').value;
-            const comuna = document.getElementById('comuna').value;
-            const precio = document.getElementById('precio').value;
-
-            const id = `#${String(document.querySelectorAll('#tablaPublicaciones tr').length + 1).padStart(3, '0')}`;
-            const nuevaFila = `<tr>
-                <td>${id}</td>
-                <td>${direccion}</td>
-                <td>${tipo}</td>
-                <td>${comuna}</td>
-                <td>${precio}</td>
-                <td><span class="badge badge-active">Publicado</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="editarPublicacion(this)">Editar</button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarPublicacion(this)">Eliminar</button>
-                </td>
-            </tr>`;
-
-            document.getElementById('tablaPublicaciones').insertAdjacentHTML('beforeend', nuevaFila);
-            document.getElementById('totalPublicaciones').textContent = document.querySelectorAll('#tablaPublicaciones tr').length;
-            this.reset();
-            alert('Publicación creada exitosamente');
-        });
-
-        // Funciones de edición y eliminación
-        function editarDueno(btn) {
-            alert('Función de edición disponible próximamente');
-        }
-
-        function eliminarDueno(btn) {
-            elementoSeleccionado = btn;
-            accionPendiente = 'eliminarDueno';
-            document.getElementById('modalMensaje').textContent = '¿Está seguro de que desea eliminar este dueño del sistema?';
-            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
-        }
-
-        function habilitarGestor(btn) {
-            alert('Función de habilitación disponible próximamente');
-        }
-
-        function eliminarGestor(btn) {
-            elementoSeleccionado = btn;
-            accionPendiente = 'eliminarGestor';
-            document.getElementById('modalMensaje').textContent = '¿Está seguro de que desea eliminar este gestor del sistema?';
-            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
-        }
-
-        function editarPublicacion(btn) {
-            alert('Función de edición disponible próximamente');
-        }
-
-        function eliminarPublicacion(btn) {
-            elementoSeleccionado = btn;
-            accionPendiente = 'eliminarPublicacion';
-            document.getElementById('modalMensaje').textContent = '¿Está seguro de que desea eliminar esta publicación?';
-            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
-        }
-
-        function confirmarAccion() {
-            if (elementoSeleccionado) {
-                const fila = elementoSeleccionado.closest('tr');
-                let tabla = null;
-
-                if (accionPendiente === 'eliminarDueno') {
-                    tabla = 'tablaDuenos';
-                    document.getElementById('totalDuenos').textContent = document.querySelectorAll('#tablaDuenos tr').length - 1;
-                } else if (accionPendiente === 'eliminarGestor') {
-                    tabla = 'tablaGestores';
-                    document.getElementById('totalGestores').textContent = document.querySelectorAll('#tablaGestores tr').length - 1;
-                } else if (accionPendiente === 'eliminarPublicacion') {
-                    tabla = 'tablaPublicaciones';
-                    document.getElementById('totalPublicaciones').textContent = document.querySelectorAll('#tablaPublicaciones tr').length - 1;
-                }
-
-                fila.remove();
-                bootstrap.Modal.getInstance(document.getElementById('modalConfirmar')).hide();
-                alert('Elemento eliminado exitosamente');
-                elementoSeleccionado = null;
-                accionPendiente = null;
-            }
+            const target = document.getElementById(seccion);
+            if (target) target.classList.add('active');
         }
 
         function cerrarSesion() {

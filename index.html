@@ -855,7 +855,7 @@
                     <li class="list-inline-item"><a class="footer-link" href="#contacto">Contacto</a></li>
                 </ul>
             </nav>
-            <a href="pagina_admin.html" class="footer-admin-link">Acceso Admin</a>
+            <a href="#" class="footer-admin-link" data-bs-toggle="modal" data-bs-target="#adminAccessModal">Acceso Admin</a>
             <p class="text-muted small mb-0">© 2026 Inmobiliaria PNK</p>
         </div>
     </footer>
@@ -987,6 +987,34 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" onclick="enviarLogin()">Entrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="adminAccessModal" tabindex="-1" aria-labelledby="adminAccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminAccessModalLabel">Acceso Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminAccessForm">
+                        <div class="mb-3">
+                            <label for="adminUser" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="adminUser" autocomplete="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminPassword" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="adminPassword" autocomplete="current-password" required>
+                        </div>
+                    </form>
+                    <p class="small text-muted mb-0">Ingrese las credenciales de administrador para abrir el panel.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-wine" onclick="enviarLoginAdmin()">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -1478,6 +1506,40 @@ function enviarLogin() {
             Swal.fire('Error','Credenciales incorrectas o usuario inactivo.','error');
         }
     }).catch(() => Swal.fire('Error','Error de red al conectar con auth.php','error'));
+}
+
+function enviarLoginAdmin() {
+    const usuario = document.getElementById('adminUser').value.trim();
+    const pass = document.getElementById('adminPassword').value.trim();
+
+    if (!usuario || !pass) {
+        Swal.fire('Atención', 'Por favor ingrese usuario y contraseña.', 'warning');
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append('login_admin', '1');
+    fd.append('usuario', usuario);
+    fd.append('password', pass);
+
+    fetch('php/auth.php', { method: 'POST', body: fd })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status === 'success') {
+                localStorage.setItem('pnkSesionActiva', 'true');
+                localStorage.setItem('pnkUsuarioActivo', usuario);
+                localStorage.setItem('pnkRolActivo', 'admin');
+                localStorage.setItem('pnkAdminAccess', 'true');
+
+                const adminModal = bootstrap.Modal.getInstance(document.getElementById('adminAccessModal'));
+                if (adminModal) adminModal.hide();
+                document.getElementById('adminAccessForm').reset();
+                window.location.href = 'pagina_admin.html';
+            } else {
+                Swal.fire('Error', 'Credenciales de administrador incorrectas.', 'error');
+            }
+        })
+        .catch(() => Swal.fire('Error', 'Error de red al conectar con auth.php', 'error'));
 }
 
         function enviarRecuperacionContrasena() {

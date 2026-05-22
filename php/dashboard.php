@@ -154,28 +154,46 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Estacionamiento</label>
-                            <input name="estacionamiento" id="propEstac" type="number" class="form-control" required>
+                            <select name="estacionamiento" id="propEstac" class="form-select" required>
+                                <option value="No">No</option>
+                                <option value="Sí">Sí</option>
+                            </select>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Logia</label>
-                            <input name="logia" id="propLogia" type="number" class="form-control" required>
+                            <select name="logia" id="propLogia" class="form-select" required>
+                                <option value="No">No</option>
+                                <option value="Sí">Sí</option>
+                            </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Cocina Amoblada</label>
-                            <input name="cocina_amoblada" id="propCocina" type="number" class="form-control" required>
+                            <select name="cocina_amoblada" id="propCocina" class="form-select" required>
+                                <option value="No">No</option>
+                                <option value="Sí">Sí</option>
+                            </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Antejardín</label>
-                            <input name="antejardin" id="propAnteJ" type="number" class="form-control" required>
+                            <select name="antejardin" id="propAnteJ" class="form-select" required>
+                                <option value="No">No</option>
+                                <option value="Sí">Sí</option>
+                            </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Patio Trasero</label>
-                            <input name="patio_trasero" id="propPatio" type="number" class="form-control" required>
+                            <select name="patio_trasero" id="propPatio" class="form-select" required>
+                                <option value="No">No</option>
+                                <option value="Sí">Sí</option>
+                            </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Piscina</label>
-                            <input name="piscina" id="propPiscina" type="number" class="form-control" required>
+                            <select name="piscina" id="propPiscina" class="form-select" required>
+                                <option value="No">No</option>
+                                <option value="Sí">Sí</option>
+                            </select>
                         </div>
 
                         <div class="col-12">
@@ -186,8 +204,9 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button id="btnLimpiarModal" type="button" class="btn btn-outline-secondary" onclick="prepararFormularioNuevo()">Limpiar</button>
+                        <button id="btnSubmitModal" type="submit" class="btn btn-primary">Registrar</button>
+                        <button id="btnEliminarModal" type="button" class="btn btn-danger" style="display:none;" onclick="confirmarEliminarModal()">Eliminar</button>
                     </div>
                 </form>
             </div>
@@ -215,17 +234,43 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                 document.getElementById('propAreaTotal').value = p.area_total || '';
                 document.getElementById('propAreaConst').value = p.area_construida || '';
                 document.getElementById('propVisita').value = p.solicitar_visita || 'No';
-                document.getElementById('propBodega').value = p.bodega || 'No';
-                document.getElementById('propEstac').value = p.estacionamiento || 0;
-                document.getElementById('propLogia').value = p.logia || 0;
-                document.getElementById('propCocina').value = p.cocina_amoblada || 0;
-                document.getElementById('propAnteJ').value = p.antejardin || 0;
-                document.getElementById('propPatio').value = p.patio_trasero || 0;
-                document.getElementById('propPiscina').value = p.piscina || 0;
+                    document.getElementById('propBodega').value = p.bodega || 'No';
+                    document.getElementById('propEstac').value = p.estacionamiento || 'No';
+                    document.getElementById('propLogia').value = p.logia || 'No';
+                    document.getElementById('propCocina').value = p.cocina_amoblada || 'No';
+                    document.getElementById('propAnteJ').value = p.antejardin || 'No';
+                    document.getElementById('propPatio').value = p.patio_trasero || 'No';
+                    document.getElementById('propPiscina').value = p.piscina || 'No';
                 document.getElementById('propCurrentFoto').value = p.foto_url || 'casa1.webp';
                 const modal = new bootstrap.Modal(document.getElementById('modalPropiedad'));
                 modal.show();
             } catch (e) { console.error(e); }
+
+            function setModalMode(mode) {
+                const btnSubmit = document.getElementById('btnSubmitModal');
+                const btnEliminar = document.getElementById('btnEliminarModal');
+                if (mode === 'insertar') {
+                    btnSubmit.textContent = 'Registrar';
+                    btnEliminar.style.display = 'none';
+                } else if (mode === 'modificar') {
+                    btnSubmit.textContent = 'Modificar';
+                    btnEliminar.style.display = '';
+                }
+            }
+
+            function prepararFormularioNuevo() {
+                document.getElementById('formPropiedad').reset();
+                document.getElementById('formAccion').value = 'insertar';
+                document.getElementById('propId').value = '';
+                document.querySelector('#modalPropiedad .modal-title').innerText = "Nueva Propiedad";
+                setModalMode('insertar');
+            }
+
+            function confirmarEliminarModal() {
+                const id = parseInt(document.getElementById('propId').value || 0, 10);
+                if (!id) return Swal.fire('Error','ID inválido para eliminar','error');
+                confirmarEliminar(id);
+            }
         }
 
         function confirmarEliminar(id) {
@@ -291,12 +336,12 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                         document.getElementById('propAreaConst').value = item.area_construida || '';
                         document.getElementById('propVisita').value = item.solicitar_visita || 'No';
                         document.getElementById('propBodega').value = item.bodega || 'No';
-                        document.getElementById('propEstac').value = item.estacionamiento || 0;
-                        document.getElementById('propLogia').value = item.logia || 0;
-                        document.getElementById('propCocina').value = item.cocina_amoblada || 0;
-                        document.getElementById('propAnteJ').value = item.antejardin || 0;
-                        document.getElementById('propPatio').value = item.patio_trasero || 0;
-                        document.getElementById('propPiscina').value = item.piscina || 0;
+                        document.getElementById('propEstac').value = item.estacionamiento || 'No';
+                        document.getElementById('propLogia').value = item.logia || 'No';
+                        document.getElementById('propCocina').value = item.cocina_amoblada || 'No';
+                        document.getElementById('propAnteJ').value = item.antejardin || 'No';
+                        document.getElementById('propPatio').value = item.patio_trasero || 'No';
+                        document.getElementById('propPiscina').value = item.piscina || 'No';
                         document.getElementById('propCurrentFoto').value = item.foto_url || 'casa1.webp';
                         const modal = new bootstrap.Modal(document.getElementById('modalPropiedad'));
                         modal.show();

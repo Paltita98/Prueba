@@ -25,7 +25,7 @@ if ($sec !== '') {
     $params[] = "%$sec%"; $types .= 's';
 }
 
-$sql = "SELECT id, tipo_propiedad, descripcion, banos, dormitorios, area_total, area_construida, precio_clp, precio_uf, fecha_publicacion, solicitar_visita, bodega, estacionamiento, logia, cocina_amoblada, antejardin, patio_trasero, piscina, foto_url FROM propiedades";
+$sql = "SELECT id, tipo_propiedad, descripcion, banos, dormitorios, area_total, area_construida, precio_clp, precio_uf, fecha_publicacion, solicitar_visita, bodega, estacionamiento, logia, cocina_amoblada, antejardin, patio_trasero, piscina, foto_url, provincia, comuna, sector FROM propiedades";
 if (!empty($where)) $sql .= ' WHERE ' . implode(' AND ', $where);
 $sql .= ' LIMIT 50';
 
