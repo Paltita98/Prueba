@@ -2,8 +2,6 @@
 // Compatibilidad: este archivo acepta login por formulario (redirige)
 // y mantiene compatibilidad con `auth.php` para peticiones AJAX.
 
-require __DIR__ . '/db.php';
-
 // Parámetros de cookie coherentes con auth.php
 $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 session_set_cookie_params([
@@ -23,9 +21,33 @@ if (!defined('ADMIN_PASS')) define('ADMIN_PASS', 'SoyelAdmin123@');
 $acceptsJson = (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false);
 $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || $acceptsJson;
 
+if (!$isAjax && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_admin']) && !empty($_POST['usuario'])) {
+    $usuario = trim($_POST['usuario'] ?? '');
+    $pass = $_POST['password'] ?? '';
+
+    if ($usuario === ADMIN_USER && $pass === ADMIN_PASS) {
+        session_regenerate_id(true);
+        $_SESSION['id'] = 999999;
+        $_SESSION['nombre'] = ADMIN_USER;
+        $_SESSION['rol'] = 'admin';
+        header('Location: ../Administrar.html');
+        exit;
+    }
+
+    header('Location: ../index.html?login=denied');
+    exit;
+}
+
 // Si es AJAX, delegamos a auth.php para mantener la API JSON
 if ($isAjax) {
     require __DIR__ . '/auth.php';
+    exit;
+}
+
+require_once __DIR__ . '/db.php';
+
+if (!$conn) {
+    header('Location: ../index.html?login=denied');
     exit;
 }
 
