@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inmobiliaria PNK</title>
+    <script>
+        if (location.protocol === 'file:') {
+            location.replace('http://localhost/Prueba/index.html');
+        }
+    </script>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -1053,21 +1058,29 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="d-flex gap-2 mb-3">
-                        <button type="button" class="btn btn-outline-dark" id="btnRegistroPropietario" onclick="setRolRegistro('propietario')">Propietario</button>
-                        <button type="button" class="btn btn-outline-dark" id="btnRegistroGestor" onclick="setRolRegistro('gestor')">Gestor Inmobiliario</button>
-                    </div>
-                    <div id="registroRoleTitle" class="mb-3 fw-semibold">Seleccione un tipo de registro para continuar.</div>
-                    <form id="registroForm">
-                        <input type="hidden" id="registroRol" value="">
+                    <div id="registroRoleTitle" class="mb-3 fw-semibold">Registro de usuario</div>
+                    <form id="registroForm" onsubmit="enviarRegistro(event)">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="rutRegistro" class="form-label">Rut</label>
-                                <input type="text" class="form-control" id="rutRegistro" required>
+                                <input type="text" class="form-control" id="rutRegistro" placeholder="19864005-0" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="nombreRegistro" class="form-label">Nombre Completo</label>
                                 <input type="text" class="form-control" id="nombreRegistro" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Rol</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="roleRegistro" id="roleRegistroGestor" value="gestor" checked>
+                                        <label class="form-check-label" for="roleRegistroGestor">Gestor</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="roleRegistro" id="roleRegistroPropietario" value="propietario">
+                                        <label class="form-check-label" for="roleRegistroPropietario">Propietario</label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="fechaNacimientoRegistro" class="form-label">Fecha de Nacimiento</label>
@@ -1094,26 +1107,23 @@
                                 <label for="telefonoRegistro" class="form-label">Teléfono Móvil</label>
                                 <input type="tel" class="form-control" id="telefonoRegistro" required>
                             </div>
-                            <div class="col-md-6 d-none" id="campoPropiedadRegistroWrapper">
-                                <label for="propiedadRegistro" class="form-label">N° de la propiedad según registro de Bienes Raíces</label>
-                                <input type="text" class="form-control" id="propiedadRegistro">
-                            </div>
                             <div class="col-md-12 d-none" id="campoCertificadoRegistroWrapper">
                                 <label for="certificadoRegistro" class="form-label">Certificado de Antecedentes</label>
-                                <input type="file" class="form-control" id="certificadoRegistro" accept="application/pdf, image/*">
+                                <input type="file" class="form-control" id="certificadoRegistro" accept="application/pdf">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success" onclick="enviarRegistro()">Registrar</button>
+                    <button type="submit" form="registroForm" class="btn btn-success">Registrar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/swal_fallback.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/validaciones.js"></script>
     <script>
@@ -1427,44 +1437,41 @@
         // Inicializar paginación cuando se carga la página
         document.addEventListener('DOMContentLoaded', function() {
             mostrarPropiedades();
-            setRolRegistro('');
             inicializarBotonUbicacion();
+
+            // Vincular cambio de rol para mostrar/ocultar certificado
+            document.querySelectorAll('input[name="roleRegistro"]').forEach(r => r.addEventListener('change', toggleRoleRegistro));
+
         });
 
-        function abrirRegistro(rol) {
-            setRolRegistro(rol);
+        function abrirRegistro() {
             const modal = new bootstrap.Modal(document.getElementById('registroModal'));
             modal.show();
+            // Asegurar que el campo de certificado se muestre/oculte según el rol seleccionado
+            toggleRoleRegistro();
         }
 
-        function setRolRegistro(rol) {
+        function setRolRegistro() {
             const titulo = document.getElementById('registroRoleTitle');
-            const inputRol = document.getElementById('registroRol');
-            const campoPropiedad = document.getElementById('campoPropiedadRegistroWrapper');
             const campoCertificado = document.getElementById('campoCertificadoRegistroWrapper');
 
-            inputRol.value = rol;
+            if (titulo) titulo.textContent = 'Registro de usuario';
+            if (campoCertificado) campoCertificado.classList.remove('d-none');
+        }
 
-            if (rol === 'propietario') {
-                titulo.textContent = 'Registro como Propietario';
-                campoPropiedad.classList.remove('d-none');
-                campoCertificado.classList.add('d-none');
-                document.getElementById('btnRegistroPropietario').classList.replace('btn-outline-dark', 'btn-dark');
-                document.getElementById('btnRegistroGestor').classList.replace('btn-dark', 'btn-outline-dark');
-            } else if (rol === 'gestor') {
-                titulo.textContent = 'Registro como Gestor Inmobiliario';
-                campoPropiedad.classList.add('d-none');
+        function toggleRoleRegistro() {
+            const role = document.querySelector('input[name="roleRegistro"]:checked')?.value || 'gestor';
+            const campoCertificado = document.getElementById('campoCertificadoRegistroWrapper');
+            const certificadoInput = document.getElementById('certificadoRegistro');
+            if (!campoCertificado || !certificadoInput) return;
+
+            if (role === 'gestor') {
                 campoCertificado.classList.remove('d-none');
-                document.getElementById('btnRegistroGestor').classList.replace('btn-outline-dark', 'btn-dark');
-                document.getElementById('btnRegistroPropietario').classList.replace('btn-dark', 'btn-outline-dark');
+                certificadoInput.setAttribute('required', 'required');
             } else {
-                titulo.textContent = 'Seleccione un tipo de registro para continuar.';
-                campoPropiedad.classList.add('d-none');
                 campoCertificado.classList.add('d-none');
-                document.getElementById('btnRegistroPropietario').classList.remove('btn-dark');
-                document.getElementById('btnRegistroPropietario').classList.add('btn-outline-dark');
-                document.getElementById('btnRegistroGestor').classList.remove('btn-dark');
-                document.getElementById('btnRegistroGestor').classList.add('btn-outline-dark');
+                certificadoInput.removeAttribute('required');
+                certificadoInput.value = '';
             }
         }
 
@@ -1473,6 +1480,9 @@ function enviarLogin() {
     const pass = document.getElementById('loginPassword').value.trim();
     if (!email || !pass) {
         Swal.fire('Atención','Por favor ingrese correo y contraseña.','warning');
+        return;
+    }
+    if (!validarLoginUsuario(email, pass)) {
         return;
     }
 
@@ -1486,20 +1496,18 @@ function enviarLogin() {
             // Sincronizar sesión con LocalStorage para compatibilidad con tus páginas estáticas
             localStorage.setItem('pnkSesionActiva', 'true');
             localStorage.setItem('pnkUsuarioActivo', email);
+            localStorage.setItem('pnkRolActivo', data.role || 'usuario');
 
             const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
             if (loginModal) loginModal.hide();
             document.getElementById('loginForm').reset();
-            
-            // Redirecciones dinámicas inteligentes basadas en el instructivo 
-            if (email.toLowerCase() === 'ivan.araus@inacapmail.cl') {
-                localStorage.setItem('pnkRolActivo', 'propietario');
+
+            const rol = String(data.role || 'usuario').toLowerCase();
+            if (rol === 'propietario') {
                 window.location.href = 'pagina_propietario.html';
-            } else if (email.toLowerCase() === 'mosiah.riveros@inacapmail.cl') {
-                localStorage.setItem('pnkRolActivo', 'gestor');
+            } else if (rol === 'gestor') {
                 window.location.href = 'pagina_gestor.html';
             } else {
-                localStorage.setItem('pnkRolActivo', 'admin');
                 window.location.href = 'dashboard.php';
             }
         } else {
@@ -1557,8 +1565,11 @@ function enviarLoginAdmin() {
             document.getElementById('recuperarContrasenaForm').reset();
         }
 
-        function enviarRegistro() {
-            const rol = document.getElementById('registroRol').value;
+        function enviarRegistro(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
             const rut = document.getElementById('rutRegistro').value.trim();
             const nombre = document.getElementById('nombreRegistro').value.trim();
             const nacimiento = document.getElementById('fechaNacimientoRegistro').value;
@@ -1566,38 +1577,57 @@ function enviarLoginAdmin() {
             const contrasena = document.getElementById('contrasenaRegistro').value.trim();
             const sexo = document.getElementById('sexoRegistro').value;
             const telefono = document.getElementById('telefonoRegistro').value.trim();
-            const propiedad = document.getElementById('propiedadRegistro').value.trim();
             const certificadoInput = document.getElementById('certificadoRegistro');
             const certificado = certificadoInput.files && certificadoInput.files[0] ? certificadoInput.files[0] : null;
+            const role = document.querySelector('input[name="roleRegistro"]:checked')?.value || 'gestor';
 
-            if (!rol) {
-                Swal.fire('Atención', 'Seleccione propietario o gestor antes de continuar.', 'warning');
-                return;
-            }
             if (!rut || !nombre || !nacimiento || !correo || !contrasena || !sexo || !telefono) {
                 Swal.fire('Atención', 'Complete todos los campos requeridos.', 'warning');
                 return;
             }
 
-            if (rol === 'propietario' && !propiedad) {
-                Swal.fire('Atención', 'Ingrese el N° de la propiedad según registro de Bienes Raíces.', 'warning');
+            if (!validarRut(rut)) {
+                Swal.fire('Error', 'El RUT ingresado no es válido.', 'error');
                 return;
             }
 
-            if (rol === 'gestor' && !certificado) {
-                Swal.fire('Atención', 'Adjunte el certificado de antecedentes.', 'warning');
+            const rutNormalizado = normalizarRut(rut);
+
+            if (!validarEmail(correo)) {
+                Swal.fire('Error', 'El correo electrónico no es válido.', 'error');
+                return;
+            }
+
+            if (!validarPassword(contrasena)) {
+                Swal.fire('Error', 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un carácter especial.', 'error');
+                return;
+            }
+
+            if (!validarTelefonoMovil(telefono)) {
+                Swal.fire('Error', 'El teléfono móvil debe ser numérico y tener entre 8 y 15 dígitos.', 'error');
+                return;
+            }
+
+            if (!certificado || !validarArchivoPdf(certificadoInput)) {
+                Swal.fire('Error', 'Adjunte un certificado PDF válido.', 'error');
+                return;
+            }
+
+            if (role !== 'gestor') {
+                Swal.fire('Atención', 'Solo registros de gestores están permitidos aquí.', 'warning');
                 return;
             }
 
             const fd = new FormData();
             fd.append('register', '1');
-            fd.append('rut', rut);
+            fd.append('rut', rutNormalizado);
             fd.append('nombre', nombre);
             fd.append('fecha_nacimiento', nacimiento);
             fd.append('correo', correo);
             fd.append('password', contrasena);
             fd.append('sexo', sexo);
             fd.append('telefono', telefono);
+            fd.append('role', role);
             if (certificado) {
                 fd.append('certificado', certificado);
             }
@@ -1609,11 +1639,10 @@ function enviarLoginAdmin() {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.status === 'success') {
-                        Swal.fire('Éxito', `Registro exitoso como ${rol}.`, 'success');
+                        Swal.fire('Éxito', 'Registro exitoso.', 'success');
                         const registroModal = bootstrap.Modal.getInstance(document.getElementById('registroModal'));
                         if (registroModal) registroModal.hide();
                         document.getElementById('registroForm').reset();
-                        setRolRegistro('');
                         return;
                     }
 
@@ -1622,9 +1651,13 @@ function enviarLoginAdmin() {
                         return;
                     }
 
-                    Swal.fire('Error', 'No se pudo registrar el usuario.', 'error');
+                    const detalle = data.reason ? ` (${data.reason})` : '';
+                    Swal.fire('Error', 'No se pudo registrar el usuario.' + detalle, 'error');
                 })
-                .catch(() => Swal.fire('Error', 'Error de red', 'error'));
+                .catch((error) => {
+                    console.error('register_error', error);
+                    Swal.fire('Error', 'Error de red', 'error');
+                });
         }
     </script>
 </body>

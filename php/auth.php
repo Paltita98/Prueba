@@ -27,13 +27,23 @@ function registrarUsuario($conn, array $datos) {
     $telefono = trim($datos['telefono'] ?? '');
     $certificadoPath = trim($datos['certificado_path'] ?? '');
 
-    if ($rut === '' || $nombre === '' || $fecha_nacimiento === '' || $correo === '' || $pass === '' || $sexo === '' || $telefono === '') {
+    if ($rut === '' || $nombre === '' || $fecha_nacimiento === '' || $correo === '' || $pass === '' || $sexo === '' || $telefono === '' || $certificadoPath === '') {
         return ['ok' => false, 'error' => 'missing_fields'];
     }
 
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
         return ['ok' => false, 'error' => 'invalid_email'];
     }
+
+    if (!preg_match('/^\d{8,15}$/', preg_replace('/\s+/', '', $telefono))) {
+        return ['ok' => false, 'error' => 'invalid_phone'];
+    }
+
+    if (!preg_match('/^\d{7,8}-[\dkK]$/', preg_replace('/\./', '', strtoupper($rut)))) {
+        return ['ok' => false, 'error' => 'invalid_rut'];
+    }
+
+    $rut = preg_replace('/[.\s]/', '', strtoupper($rut));
 
     $stmt = mysqli_prepare($conn, 'SELECT id FROM usuarios WHERE correo = ? OR rut = ? LIMIT 1');
     if (!$stmt) {
@@ -62,6 +72,13 @@ function registrarUsuario($conn, array $datos) {
 
 // Registro vía POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
+    // Sólo permitimos registros de gestores desde este formulario
+    $role = trim(strval($_POST['role'] ?? 'gestor'));
+    if ($role !== 'gestor') {
+        echo json_encode(['status' => 'error', 'reason' => 'role_not_allowed']);
+        exit;
+    }
+
     $certificadoPath = '';
     if (!empty($_FILES['certificado']) && is_array($_FILES['certificado']) && $_FILES['certificado']['error'] === UPLOAD_ERR_OK) {
         $tmpName = $_FILES['certificado']['tmp_name'];
@@ -122,7 +139,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         session_regenerate_id(true);
         $_SESSION['id'] = $id;
         $_SESSION['nombre'] = $nombre;
-        echo json_encode(['status' => 'success', 'role' => 'usuario']);
+        $_SESSION['rol'] = 'gestor';
+        echo json_encode(['status' => 'success', 'role' => 'gestor']);
     } else {
         echo json_encode(['status' => 'denied']);
     }

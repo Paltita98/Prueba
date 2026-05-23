@@ -1,33 +1,106 @@
-// Validación RUT 
-function validarRut(rut) {
-    if (!/^[0-9]+-[0-9kK]{1}$/.test(rut)) return false;
-    let [num, dv] = rut.split('-');
-    let suma = 0, mul = 2;
-    for (let i = num.length - 1; i >= 0; i--) {
-        suma += num[i] * mul;
-        mul = mul === 7 ? 2 : mul + 1;
-    }
-    let res = 11 - (suma % 11);
-    let vlp = res === 11 ? '0' : res === 10 ? 'K' : res.toString();
-    return vlp.toUpperCase() === dv.toUpperCase();
+function normalizarRut(rut) {
+    return String(rut || '')
+        .trim()
+        .replace(/\./g, '')
+        .replace(/\s+/g, '')
+        .toUpperCase();
 }
 
-// Validación Email 
+function formatearRut(rut) {
+    const limpio = normalizarRut(rut);
+    const partes = limpio.split('-');
+    if (partes.length !== 2) return limpio;
+
+    const numero = partes[0];
+    const dv = partes[1];
+    const cuerpo = numero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `${cuerpo}-${dv}`;
+}
+
+function validarRut(rut) {
+    const limpio = normalizarRut(rut);
+    if (!/^\d{7,8}-[\dK]$/.test(limpio)) return false;
+
+    const [numero, dv] = limpio.split('-');
+    let suma = 0;
+    let multiplicador = 2;
+
+    for (let i = numero.length - 1; i >= 0; i--) {
+        suma += Number(numero[i]) * multiplicador;
+        multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+    }
+
+    const resto = 11 - (suma % 11);
+    const dvCalculado = resto === 11 ? '0' : resto === 10 ? 'K' : String(resto);
+    return dvCalculado === dv;
+}
+
 function validarEmail(email) {
-    const partes = email.split('@');
-    if (partes.length !== 2) return false; // Sólo 1 símbolo @
-    if (partes[0].length < 3) return false; // Mínimo 3 caracteres antes
-    if (!partes[1].includes('.') || partes[1].indexOf('.') === 0) return false; // Al menos 1 punto después
+    const valor = String(email || '').trim();
+    if (!valor) return false;
+    const partes = valor.split('@');
+    if (partes.length !== 2) return false;
+    if (partes[0].length < 3) return false;
+    if (!partes[1] || !partes[1].includes('.')) return false;
+    if (partes[1].startsWith('.')) return false;
+    if (partes[1].endsWith('.')) return false;
     return true;
 }
 
-// Validación Contraseña 
 function validarPassword(pass) {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
-    return regex.test(pass);
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/.test(String(pass || ''));
 }
 
-// Validación de formulario de propiedad antes de enviar
+function validarTelefonoMovil(telefono) {
+    const limpio = String(telefono || '').replace(/\s+/g, '');
+    return /^\d{8,15}$/.test(limpio);
+}
+
+function validarArchivoPdf(input) {
+    if (!input || !input.files || input.files.length === 0) return false;
+    const archivo = input.files[0];
+    return archivo && /\.pdf$/i.test(archivo.name);
+}
+
+function mostrarError(mensaje) {
+    Swal.fire('Error', mensaje, 'error');
+}
+
+function validarRegistroUsuario(form) {
+    const rut = document.getElementById('rutRegistro')?.value || '';
+    const nombre = document.getElementById('nombreRegistro')?.value || '';
+    const nacimiento = document.getElementById('fechaNacimientoRegistro')?.value || '';
+    const correo = document.getElementById('correoRegistro')?.value || '';
+    const contrasena = document.getElementById('contrasenaRegistro')?.value || '';
+    const sexo = document.getElementById('sexoRegistro')?.value || '';
+    const telefono = document.getElementById('telefonoRegistro')?.value || '';
+    const certificado = document.getElementById('certificadoRegistro');
+
+    if (!rut || !nombre || !nacimiento || !correo || !contrasena || !sexo || !telefono) {
+        mostrarError('Todos los campos deben estar completos.');
+        return false;
+    }
+    if (!validarRut(rut)) { mostrarError('El RUT ingresado no es válido.'); return false; }
+    if (!validarEmail(correo)) { mostrarError('El correo electrónico no es válido.'); return false; }
+    if (!validarPassword(contrasena)) {
+        mostrarError('La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un carácter especial.');
+        return false;
+    }
+    if (!validarTelefonoMovil(telefono)) { mostrarError('El teléfono móvil debe ser numérico y tener entre 8 y 15 dígitos.'); return false; }
+    if (!validarArchivoPdf(certificado)) { mostrarError('Debe adjuntar un archivo PDF válido y no vacío.'); return false; }
+
+    return true;
+}
+
+function validarLoginUsuario(email, pass) {
+    if (!validarEmail(email)) { mostrarError('Ingrese un correo electrónico válido.'); return false; }
+    if (!validarPassword(pass)) {
+        mostrarError('La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un carácter especial.');
+        return false;
+    }
+    return true;
+}
+
 function validarFormularioPropiedad(form) {
     const accion = form.querySelector('[name="accion"]')?.value || 'insertar';
     const tipo = form.querySelector('[name="tipo_propiedad"]').value.trim();
@@ -50,7 +123,6 @@ function validarFormularioPropiedad(form) {
     if (!fecha) { Swal.fire('Error','Fecha de publicación es obligatoria','error'); return false; }
     if (!visita) { Swal.fire('Error','Seleccione si solicitar visita','error'); return false; }
 
-    // Características obligatorias
     const bodega = form.querySelector('[name="bodega"]').value;
     const estacionamiento = form.querySelector('[name="estacionamiento"]').value;
     const logia = form.querySelector('[name="logia"]').value;
@@ -81,32 +153,12 @@ function validarFormularioPropiedad(form) {
     return true;
 }
 
-// Calcula precio UF a partir de CLP (ajustar UF_RATE según valor real)
-const UF_RATE = 35000; // ejemplo, actualizar según fuente real
+const UF_RATE = 35000;
 function calcularUFFromCLP(clp) {
     if (!clp || isNaN(clp)) return '';
     return (Number(clp) / UF_RATE).toFixed(2);
 }
 
-// Validaciones del registro de gestor (archivo PDF)
 function validarRegistroGestor(form) {
-    const rut = document.getElementById('rutRegistro').value.trim();
-    const correo = document.getElementById('correoRegistro').value.trim();
-    const telefono = document.getElementById('telefonoRegistro').value.trim();
-    const certificado = document.getElementById('certificadoRegistro');
-
-    if (!rut || !validarRut(rut)) { Swal.fire('Error','RUT inválido','error'); return false; }
-    if (!correo || !validarEmail(correo)) { Swal.fire('Error','Correo inválido','error'); return false; }
-    if (!telefono || isNaN(telefono) || telefono.length < 8) { Swal.fire('Error','Teléfono inválido','error'); return false; }
-    if (!certificado || !certificado.files || certificado.files.length === 0) { Swal.fire('Error','Adjunte certificado PDF','error'); return false; }
-    const file = certificado.files[0];
-    if (!file.name.toLowerCase().endsWith('.pdf')) { Swal.fire('Error','El certificado debe ser PDF','error'); return false; }
-    return true;
-}
-
-// Validación del login (contraseña y correo)
-function validarLogin(email, pass) {
-    if (!email || !validarEmail(email)) { Swal.fire('Error','Ingrese un correo válido','error'); return false; }
-    if (!pass || !validarPassword(pass)) { Swal.fire('Error','Contraseña no cumple requisitos','error'); return false; }
-    return true;
+    return validarRegistroUsuario(form);
 }

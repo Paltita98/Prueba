@@ -319,7 +319,41 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
         }
 
         function limpiarFormulario() {
-            form.reset();
+            // Limpiar todos los inputs, selects y textareas del formulario
+            const elements = form.querySelectorAll('input, select, textarea');
+            elements.forEach(el => {
+                const type = el.type ? el.type.toLowerCase() : el.tagName.toLowerCase();
+                if (el.name === 'csrf') return; // conservar token CSRF
+                if (el.name === 'accion') return; // lo ajustamos explícitamente abajo
+                if (el.name === 'id') return; // lo ajustamos explícitamente
+                if (type === 'file') {
+                    try { el.value = ''; } catch (e) { /* some browsers block direct clear, ignore */ }
+                    // Si el input acepta múltiples archivos, también limpiar lista
+                    if (el.files && el.files.length) {
+                        // crear DataTransfer vacío (si es compatible)
+                        try { const dt = new DataTransfer(); el.files = dt.files; } catch (e) { /* silent */ }
+                    }
+                    return;
+                }
+
+                if (el.tagName.toLowerCase() === 'select') {
+                    // si existe opción 'No', seleccionarla; si existe opción vacía, seleccionarla; si no, seleccionar primer índice
+                    if ([...el.options].some(o => o.value === 'No')) el.value = 'No';
+                    else if ([...el.options].some(o => o.value === '')) el.value = '';
+                    else el.selectedIndex = 0;
+                    return;
+                }
+
+                if (type === 'number') {
+                    el.value = 0;
+                    return;
+                }
+
+                // escondidos y demás: limpiar texto por defecto
+                el.value = '';
+            });
+
+            // Valores hidden y estado visual
             document.getElementById('accionForm').value = 'insertar';
             document.getElementById('propiedadId').value = '';
             document.getElementById('currentFotoUrl').value = 'casa1.webp';

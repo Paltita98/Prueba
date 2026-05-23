@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar - Inmobiliaria PNK</title>
+    <script>
+        if (location.protocol === 'file:') {
+            location.replace('http://localhost/Prueba/Administrar.html');
+        }
+    </script>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -157,6 +162,9 @@
             <div class="card panel mb-4">
                 <div class="card-header">Usuarios registrados</div>
                 <div class="card-body">
+                    <div class="mb-3 d-flex justify-content-end">
+                        <a class="btn btn-outline-secondary btn-sm" href="php/listar_usuarios.php">Abrir CRUD de usuarios</a>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle mb-0">
                             <thead>
@@ -205,6 +213,7 @@
         </div>
     </div>
 
+    <script src="js/swal_fallback.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
         let adminAutenticado = false;
@@ -300,7 +309,7 @@
             document.getElementById('countUsuarios').textContent = items.length;
 
             if (!items.length) {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No hay usuarios registrados.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No hay usuarios registrados.</td></tr>';
                 return;
             }
 
@@ -323,7 +332,7 @@
         function cargarDatos() {
             Promise.all([
                 fetch('php/search_propiedades.php', { credentials: 'same-origin' }).then((response) => response.json()),
-                fetch('php/listar_usuarios.php', { credentials: 'same-origin' }).then((response) => response.json())
+                fetch('php/listar_usuarios.php?format=json', { credentials: 'same-origin' }).then((response) => response.json())
             ])
                 .then(([propiedades, usuarios]) => {
                     renderPropiedades(Array.isArray(propiedades) ? propiedades : []);
@@ -335,6 +344,14 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            const tieneAcceso = localStorage.getItem('pnkAdminAccess') === 'true' || localStorage.getItem('pnkRolActivo') === 'admin';
+            if (tieneAcceso) {
+                adminAutenticado = true;
+                mostrarContenido();
+                cargarDatos();
+                return;
+            }
+
             abrirModalLogin();
         });
     </script>
