@@ -58,7 +58,9 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                     <td><?= (int)$p['dormitorios'] ?></td>
                     <td><?= htmlspecialchars($p['area_total'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td>
-                        <img src="../uploads/properties/<?= htmlspecialchars($p['foto_url'] ?: 'casa1.webp', ENT_QUOTES, 'UTF-8') ?>" alt="Foto propiedad" style="width:72px;height:48px;object-fit:cover;border-radius:6px;">
+                        <button type="button" class="btn p-0 border-0 bg-transparent" onclick="abrirGaleria(<?= (int)$p['id'] ?>, <?= json_encode($p['tipo_propiedad'] . ' - ' . $p['provincia'] . ' / ' . $p['comuna']) ?>)">
+                            <img src="../uploads/properties/<?= htmlspecialchars($p['foto_url'] ?: 'casa1.webp', ENT_QUOTES, 'UTF-8') ?>" alt="Foto propiedad" title="Ver galería" style="width:72px;height:48px;object-fit:cover;border-radius:6px;cursor:pointer;">
+                        </button>
                     </td>
                     <td>$<?= number_format((int)$p['precio_clp']) ?></td>
                     <td>
@@ -213,9 +215,106 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
         </div>
     </div>
 
+    <div class="modal fade" id="galeriaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="galeriaTitulo">Galería de propiedad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="galeriaCarousel" class="carousel slide" data-bs-ride="false">
+                        <div class="carousel-inner" id="galeriaCarouselInner">
+                            <div class="text-center py-5 text-muted">Selecciona una propiedad para ver sus imágenes.</div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Funciones de interacción
         const CSRF_TOKEN = '<?= $_SESSION['csrf_token'] ?>';
+
+        let galeriaModalInstance = null;
+
+        function getGaleriaModal() {
+            if (!galeriaModalInstance) {
+                galeriaModalInstance = new bootstrap.Modal(document.getElementById('galeriaModal'));
+            }
+            return galeriaModalInstance;
+        }
+
+        function setModalMode(mode) {
+            const btnSubmit = document.getElementById('btnSubmitModal');
+            const btnEliminar = document.getElementById('btnEliminarModal');
+            if (mode === 'insertar') {
+                btnSubmit.textContent = 'Registrar';
+                btnEliminar.style.display = 'none';
+            } else if (mode === 'modificar') {
+                btnSubmit.textContent = 'Modificar';
+                btnEliminar.style.display = '';
+            }
+        }
+
+        function prepararFormularioNuevo() {
+            document.getElementById('formPropiedad').reset();
+            document.getElementById('formAccion').value = 'insertar';
+            document.getElementById('propId').value = '';
+            document.querySelector('#modalPropiedad .modal-title').innerText = 'Nueva Propiedad';
+            setModalMode('insertar');
+        }
+
+        function confirmarEliminarModal() {
+            const id = parseInt(document.getElementById('propId').value || 0, 10);
+            if (!id) return Swal.fire('Error', 'ID inválido para eliminar', 'error');
+            confirmarEliminar(id);
+        }
+
+        function crearSlideImagen(src, active) {
+            const item = document.createElement('div');
+            item.className = 'carousel-item' + (active ? ' active' : '');
+            const img = document.createElement('img');
+            img.className = 'd-block w-100';
+            img.style.maxHeight = '75vh';
+            img.style.objectFit = 'contain';
+            img.alt = 'Fotografía de la propiedad';
+            img.src = src;
+            item.appendChild(img);
+            return item;
+        }
+
+        async function abrirGaleria(id, titulo) {
+            const tituloEl = document.getElementById('galeriaTitulo');
+            const inner = document.getElementById('galeriaCarouselInner');
+            tituloEl.textContent = titulo || 'Galería de propiedad';
+            inner.innerHTML = '<div class="text-center py-5 text-muted">Cargando imágenes...</div>';
+            getGaleriaModal().show();
+
+            try {
+                const response = await fetch(`crud_propiedades.php?accion=galeria&id=${encodeURIComponent(id)}`, { credentials: 'same-origin' });
+                const data = await response.json();
+                if (!response.ok || !data.ok || !Array.isArray(data.imagenes) || data.imagenes.length === 0) {
+                    throw new Error(data.error || 'No se pudo cargar la galería.');
+                }
+
+                inner.innerHTML = '';
+                data.imagenes.forEach((filename, index) => {
+                    inner.appendChild(crearSlideImagen(`../uploads/properties/${filename}`, index === 0));
+                });
+            } catch (error) {
+                inner.innerHTML = `<div class="alert alert-danger mb-0">${error.message || 'No se pudo cargar la galería.'}</div>`;
+            }
+        }
 
         function cargarDatosEditar(btn) {
             try {
@@ -245,32 +344,7 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                 const modal = new bootstrap.Modal(document.getElementById('modalPropiedad'));
                 modal.show();
             } catch (e) { console.error(e); }
-
-            function setModalMode(mode) {
-                const btnSubmit = document.getElementById('btnSubmitModal');
-                const btnEliminar = document.getElementById('btnEliminarModal');
-                if (mode === 'insertar') {
-                    btnSubmit.textContent = 'Registrar';
-                    btnEliminar.style.display = 'none';
-                } else if (mode === 'modificar') {
-                    btnSubmit.textContent = 'Modificar';
-                    btnEliminar.style.display = '';
-                }
-            }
-
-            function prepararFormularioNuevo() {
-                document.getElementById('formPropiedad').reset();
-                document.getElementById('formAccion').value = 'insertar';
-                document.getElementById('propId').value = '';
-                document.querySelector('#modalPropiedad .modal-title').innerText = "Nueva Propiedad";
-                setModalMode('insertar');
-            }
-
-            function confirmarEliminarModal() {
-                const id = parseInt(document.getElementById('propId').value || 0, 10);
-                if (!id) return Swal.fire('Error','ID inválido para eliminar','error');
-                confirmarEliminar(id);
-            }
+                setModalMode('modificar');
         }
 
         function confirmarEliminar(id) {
@@ -372,23 +446,19 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                 }
             }).catch(()=> Swal.fire('Error','Error de red','error'));
         });
-// Listener en tiempo real para calcular automáticamente la UF basándose en el precio CLP (Punto 44)
-document.getElementById('propPrecioCLP').addEventListener('input', function() {
-    const clpVal = this.value;
-    // Llama a la función de tu archivo validaciones.js
-    document.getElementById('propPrecioUF').value = calcularUFFromCLP(clpVal);
-});
 
-// Modificar la carga de la función de guardado para que cambie dinámicamente el botón al presionar Editar
-function prepararFormularioNuevo() {
-    document.getElementById('formPropiedad').reset();
-    document.getElementById('formAccion').value = 'insertar';
-    document.getElementById('propId').value = '';
-    document.querySelector('#modalPropiedad .modal-title').innerText = "Nueva Propiedad";
-}
+        // Listener en tiempo real para calcular automáticamente la UF basándose en el precio CLP
+        document.getElementById('propPrecioCLP').addEventListener('input', function() {
+            const clpVal = this.value;
+            document.getElementById('propPrecioUF').value = calcularUFFromCLP(clpVal);
+        });
 
-// Vincular al botón de "Nueva Propiedad" para limpiar estados previos de edición
-document.querySelector('[data-bs-target="#modalPropiedad"]').addEventListener('click', prepararFormularioNuevo);
+        // Vincular al botón de "Nueva Propiedad" para limpiar estados previos de edición
+        document.querySelector('[data-bs-target="#modalPropiedad"]').addEventListener('click', prepararFormularioNuevo);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            setModalMode('insertar');
+        });
     </script>
     <script src="../js/bootstrap.bundle.min.js"></script>
     <script src="../js/validaciones.js"></script>

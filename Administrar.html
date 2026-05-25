@@ -6,7 +6,7 @@
     <title>Administrar - Inmobiliaria PNK</title>
     <script>
         if (location.protocol === 'file:') {
-            location.replace('http://localhost/Prueba/Administrar.html');
+            location.replace(location.pathname.split('/').pop() || 'Administrar.html');
         }
     </script>
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -93,6 +93,26 @@
             border-radius: 8px;
             border: 1px solid #e3d8d0;
             background: #fff;
+        }
+
+        .gallery-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--wine);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .gallery-trigger:hover .gallery-label {
+            text-decoration: underline;
+        }
+
+        .gallery-label {
+            font-size: .92rem;
         }
 
         .content-hidden {
@@ -186,6 +206,32 @@
         </section>
     </main>
 
+    <div class="modal fade" id="galeriaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="galeriaTitulo">Galería de propiedad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="galeriaCarousel" class="carousel slide" data-bs-ride="false">
+                        <div class="carousel-inner" id="galeriaCarouselInner">
+                            <div class="text-center py-5 text-muted">Selecciona una propiedad para ver sus imágenes.</div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -217,6 +263,51 @@
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
         let adminAutenticado = false;
+        let galeriaModalInstance = null;
+
+        function getGaleriaModal() {
+            if (!galeriaModalInstance) {
+                galeriaModalInstance = new bootstrap.Modal(document.getElementById('galeriaModal'));
+            }
+            return galeriaModalInstance;
+        }
+
+        function crearSlideImagen(src, active) {
+            const item = document.createElement('div');
+            item.className = 'carousel-item' + (active ? ' active' : '');
+            const img = document.createElement('img');
+            img.className = 'd-block w-100';
+            img.style.maxHeight = '75vh';
+            img.style.objectFit = 'contain';
+            img.alt = 'Fotografía de la propiedad';
+            img.src = src;
+            item.appendChild(img);
+            return item;
+        }
+
+        async function abrirGaleria(id, titulo) {
+            const tituloEl = document.getElementById('galeriaTitulo');
+            const inner = document.getElementById('galeriaCarouselInner');
+            tituloEl.textContent = titulo || 'Galería de propiedad';
+            inner.innerHTML = '<div class="text-center py-5 text-muted">Cargando imágenes...</div>';
+            getGaleriaModal().show();
+
+            try {
+                const response = await fetch(`php/crud_propiedades.php?accion=galeria&id=${encodeURIComponent(id)}`, { credentials: 'same-origin' });
+                const data = await response.json();
+
+                if (!response.ok || !data.ok || !Array.isArray(data.imagenes) || data.imagenes.length === 0) {
+                    throw new Error(data.error || 'No se pudo cargar la galería.');
+                }
+
+                inner.innerHTML = '';
+                data.imagenes.forEach((filename, index) => {
+                    inner.appendChild(crearSlideImagen(`uploads/properties/${filename}`, index === 0));
+                });
+            } catch (error) {
+                inner.innerHTML = `<div class="alert alert-danger mb-0">${error.message || 'No se pudo cargar la galería.'}</div>`;
+            }
+        }
 
         function abrirModalLogin() {
             const modal = new bootstrap.Modal(document.getElementById('adminLoginModal'), { backdrop: 'static', keyboard: false });
@@ -297,7 +388,12 @@
                     <td>${item.comuna ?? ''}</td>
                     <td>${item.sector ?? ''}</td>
                     <td>$${formatearNumero(item.precio_clp)}</td>
-                    <td><img class="thumb" src="uploads/properties/${item.foto_url || 'casa1.webp'}" alt="Foto propiedad"></td>
+                    <td>
+                        <button type="button" class="gallery-trigger" data-prop-id="${Number(item.id || 0)}" data-prop-title="${String(`${item.tipo_propiedad ?? ''} - ${item.provincia ?? ''} / ${item.comuna ?? ''}`).replace(/"/g, '&quot;')}">
+                            <img class="thumb" src="uploads/properties/${item.foto_url || 'casa1.webp'}" alt="Foto propiedad" title="Ver galería">
+                            <span class="gallery-label">Ver más...</span>
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -342,6 +438,16 @@
                     Swal.fire('Error', 'No se pudieron cargar las tablas.', 'error');
                 });
         }
+
+        document.getElementById('tablaPropiedades').addEventListener('click', (event) => {
+            const trigger = event.target.closest('.gallery-trigger');
+            if (!trigger) return;
+            const id = Number(trigger.dataset.propId || 0);
+            const titulo = trigger.dataset.propTitle || '';
+            if (id > 0) {
+                abrirGaleria(id, titulo);
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const tieneAcceso = localStorage.getItem('pnkAdminAccess') === 'true' || localStorage.getItem('pnkRolActivo') === 'admin';

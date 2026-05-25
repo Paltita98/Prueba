@@ -2,6 +2,32 @@
 // 1. Incluir base de datos de manera global al inicio de todo el ciclo de vida del script
 include __DIR__ . '/db.php';
 
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+    ini_set('display_errors', '0');
+    ob_start();
+    register_shutdown_function(function () {
+        $error = error_get_last();
+        if (!$error) {
+            return;
+        }
+
+        if (!in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR], true)) {
+            return;
+        }
+
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
+
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(500);
+        }
+
+        echo json_encode(['ok' => false, 'error' => 'Error interno del servidor.']);
+    });
+}
+
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
 // Control de acceso seguro y protección de sesión activa
@@ -23,9 +49,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     header('Content-Type: text/html; charset=utf-8');
 }
 
-// Verificación robusta mediante Token CSRF contra ataques de suplantación
-function verify_csrf($token) {
-    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && (($_GET['accion'] ?? '') === 'galeria')) {
+    header('Content-Type: application/json; charset=utf-8');
+    if (!isset($_SESSION['id'])) {
+        http_response_code(403);
+        echo json_encode(['ok' => false, 'error' => 'access_denied']);
+        exit;
+    }
+
+    $propiedadId = intval($_GET['id'] ?? 0);
+    if ($propiedadId <= 0) {
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'error' => 'ID de propiedad inválido.']);
+        exit;
+    }
+
+    $imagenes = [];
+    $stmtImagenes = mysqli_prepare($conn, 'SELECT filename, is_default FROM propiedad_imagenes WHERE propiedad_id = ? ORDER BY is_default DESC, id ASC');
+    if ($stmtImagenes) {
+        mysqli_stmt_bind_param($stmtImagenes, 'i', $propiedadId);
+        mysqli_stmt_execute($stmtImagenes);
+        $resImagenes = mysqli_stmt_get_result($stmtImagenes);
+        while ($fila = mysqli_fetch_assoc($resImagenes)) {
+            $imagenes[] = $fila['filename'];
+        }
+        mysqli_stmt_close($stmtImagenes);
+    }
+
+    if (empty($imagenes)) {
+        $stmtFoto = mysqli_prepare($conn, 'SELECT foto_url FROM propiedades WHERE id = ? LIMIT 1');
+        if ($stmtFoto) {
+            mysqli_stmt_bind_param($stmtFoto, 'i', $propiedadId);
+            mysqli_stmt_execute($stmtFoto);
+            $resFoto = mysqli_stmt_get_result($stmtFoto);
+            if ($resFoto && ($fila = mysqli_fetch_assoc($resFoto))) {
+                $imagenes[] = $fila['foto_url'] ?: 'casa1.webp';
+            }
+            mysqli_stmt_close($stmtFoto);
+        }
+    }
+
+    if (empty($imagenes)) {
+        $imagenes[] = 'casa1.webp';
+    }
+
+    echo json_encode(['ok' => true, 'imagenes' => $imagenes]);
+    exit;
 }
 
 function bind_stmt_params($stmt, string $types, array $values) {
@@ -34,6 +103,14 @@ function bind_stmt_params($stmt, string $types, array $values) {
         $bindArgs[] = &$values[$index];
     }
     return call_user_func_array('mysqli_stmt_bind_param', $bindArgs);
+}
+
+function verify_csrf(?string $token): bool {
+    if (empty($_SESSION['csrf_token']) || empty($token)) {
+        return false;
+    }
+
+    return hash_equals((string) $_SESSION['csrf_token'], (string) $token);
 }
 
 function normalize_upload_files(array $files): array {
@@ -262,7 +339,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
                                             <td><?= h($propiedad['banos']) ?></td>
                                             <td><?= h($propiedad['dormitorios']) ?></td>
                                             <td><?= h($propiedad['area_total']) ?></td>
-                                            <td><img class="prop-thumb" src="../uploads/properties/<?= h($propiedad['foto_url'] ?: 'casa1.webp') ?>" alt="Foto"></td>
+                                            <td>
+                                                <button type="button" class="btn p-0 border-0 bg-transparent" onclick="abrirGaleria(<?= (int)$propiedad['id'] ?>, <?= json_encode(h($propiedad['tipo_propiedad'] . ' - ' . $propiedad['provincia'] . ' / ' . $propiedad['comuna'])) ?>)">
+                                                    <img class="prop-thumb" src="../uploads/properties/<?= h($propiedad['foto_url'] ?: 'casa1.webp') ?>" alt="Foto" title="Ver galería">
+                                                </button>
+                                            </td>
                                             <td>$<?= number_format((float)$propiedad['precio_clp'], 0, ',', '.') ?></td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-secondary" type="button" onclick='cargarEditar(<?= json_encode($propiedad, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>)'>Editar</button>
@@ -282,10 +363,35 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
         </div>
     </div>
 
+    <div class="modal fade" id="galeriaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-md-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="galeriaTitulo">Galería de propiedad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="galeriaCarousel" class="carousel slide" data-bs-ride="false">
+                        <div class="carousel-inner" id="galeriaCarouselInner"></div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/bootstrap.bundle.min.js"></script>
     <script>
         const UF_RATE = 35000;
         const form = document.getElementById('crudPropiedadForm');
+        const galeriaModal = new bootstrap.Modal(document.getElementById('galeriaModal'));
 
         function calcularUFFromCLP(clp) {
             const valor = Number(clp || 0);
@@ -409,8 +515,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
                 return;
             }
 
-            fetch('crud_propiedades.php', { method: 'POST', body: fd })
-                .then((response) => response.json())
+            fetch('crud_propiedades.php', { method: 'POST', body: fd, credentials: 'same-origin' })
+                .then(async (response) => {
+                    const text = await response.text();
+                    let data = {};
+                    try {
+                        data = text ? JSON.parse(text) : {};
+                    } catch (error) {
+                        throw new Error(text || 'Respuesta inválida del servidor');
+                    }
+                    if (!response.ok) {
+                        throw new Error(data.error || text || 'Respuesta inválida del servidor');
+                    }
+                    return data;
+                })
                 .then((data) => {
                     if (data.ok) {
                         Swal.fire('Éxito', 'Operación realizada correctamente.', 'success').then(() => {
@@ -425,7 +543,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
                         Swal.fire('Error', data.error || 'No se pudo completar la operación.', 'error');
                     }
                 })
-                .catch(() => Swal.fire('Error', 'Error de red al conectar con el CRUD.', 'error'));
+                .catch((error) => Swal.fire('Error', error.message || 'Error de red al conectar con el CRUD.', 'error'));
         }
 
         function eliminarPorId(id) {
@@ -442,8 +560,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
                 const fd = new FormData(form);
                 fd.set('accion', 'eliminar');
                 fd.set('id', id);
-                fetch('crud_propiedades.php', { method: 'POST', body: fd })
-                    .then((response) => response.json())
+                fetch('crud_propiedades.php', { method: 'POST', body: fd, credentials: 'same-origin' })
+                    .then(async (response) => {
+                        const text = await response.text();
+                        let data = {};
+                        try {
+                            data = text ? JSON.parse(text) : {};
+                        } catch (error) {
+                            throw new Error(text || 'Respuesta inválida del servidor');
+                        }
+                        if (!response.ok) {
+                            throw new Error(data.error || text || 'Respuesta inválida del servidor');
+                        }
+                        return data;
+                    })
                     .then((data) => {
                         if (data.ok) {
                             Swal.fire('Eliminado', 'La propiedad fue eliminada.', 'success').then(() => window.location.reload());
@@ -451,8 +581,44 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
                             Swal.fire('Error', data.error || 'No se pudo eliminar.', 'error');
                         }
                     })
-                    .catch(() => Swal.fire('Error', 'Error de red al conectar con el CRUD.', 'error'));
+                    .catch((error) => Swal.fire('Error', error.message || 'Error de red al conectar con el CRUD.', 'error'));
             });
+        }
+
+        function crearSlideImagen(src, active) {
+            const item = document.createElement('div');
+            item.className = 'carousel-item' + (active ? ' active' : '');
+            const img = document.createElement('img');
+            img.className = 'd-block w-100';
+            img.style.maxHeight = '70vh';
+            img.style.objectFit = 'contain';
+            img.alt = 'Fotografía de la propiedad';
+            img.src = src;
+            item.appendChild(img);
+            return item;
+        }
+
+        async function abrirGaleria(id, titulo) {
+            const tituloEl = document.getElementById('galeriaTitulo');
+            const inner = document.getElementById('galeriaCarouselInner');
+            tituloEl.textContent = titulo || 'Galería de propiedad';
+            inner.innerHTML = '<div class="text-center py-5 text-muted">Cargando imágenes...</div>';
+            galeriaModal.show();
+
+            try {
+                const response = await fetch(`crud_propiedades.php?accion=galeria&id=${encodeURIComponent(id)}`, { credentials: 'same-origin' });
+                const data = await response.json();
+                if (!response.ok || !data.ok || !Array.isArray(data.imagenes) || data.imagenes.length === 0) {
+                    throw new Error(data.error || 'No se pudo cargar la galería.');
+                }
+
+                inner.innerHTML = '';
+                data.imagenes.forEach((filename, index) => {
+                    inner.appendChild(crearSlideImagen(`../uploads/properties/${filename}`, index === 0));
+                });
+            } catch (error) {
+                inner.innerHTML = `<div class="alert alert-danger mb-0">${error.message || 'No se pudo cargar la galería.'}</div>`;
+            }
         }
     </script>
 </body>
@@ -469,6 +635,13 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 <?php
+    exit;
+}
+
+if (!($conn instanceof mysqli)) {
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(500);
+    echo json_encode(['ok' => false, 'error' => 'No se pudo conectar a la base de datos.']);
     exit;
 }
 
