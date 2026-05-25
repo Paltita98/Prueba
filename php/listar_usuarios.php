@@ -262,11 +262,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
         $nombre = trim($_POST['nombre'] ?? '');
         $fecha = trim($_POST['fecha_nacimiento'] ?? '');
         $correo = trim($_POST['correo'] ?? '');
-        $password = $_POST['password'] ?? '';
         $sexo = trim($_POST['sexo'] ?? '');
         $telefono = trim($_POST['telefono'] ?? '');
         $estado = intval($_POST['estado'] ?? 1);
-        $certificadoActual = $actual['certificado_path'] ?? '';
 
         if ($rut === '' || $nombre === '' || $fecha === '' || $correo === '' || $sexo === '' || $telefono === '') {
             echo json_encode(['ok' => false, 'error' => 'missing_fields']);
@@ -285,27 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
             exit;
         }
 
-        $nuevoCertificado = $certificadoActual;
-        if (!empty($_FILES['certificado']) && ($_FILES['certificado']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
-            $upload = subir_pdf_certificado($_FILES['certificado']);
-            if (!$upload['ok']) {
-                echo json_encode(['ok' => false, 'error' => $upload['error']]);
-                exit;
-            }
-            borrar_archivo_certificado($certificadoActual);
-            $nuevoCertificado = $upload['path'];
-        }
-
-        $hash = $actual['password_hash'];
-        if ($password !== '') {
-            if (!validar_password_robusta($password)) {
-                echo json_encode(['ok' => false, 'error' => 'invalid_password']);
-                exit;
-            }
-            $hash = password_hash($password, PASSWORD_BCRYPT);
-        }
-
-        $sqlUpdate = 'UPDATE usuarios SET rut = ?, nombre = ?, fecha_nacimiento = ?, correo = ?, password_hash = ?, sexo = ?, telefono = ?, certificado_path = ?, estado = ? WHERE id = ?';
+        $sqlUpdate = 'UPDATE usuarios SET rut = ?, nombre = ?, fecha_nacimiento = ?, correo = ?, sexo = ?, telefono = ?, estado = ? WHERE id = ?';
 
         $stmt = mysqli_prepare($conn, $sqlUpdate);
         if (!$stmt) {
@@ -313,7 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
             exit;
         }
         $rutNormalizado = normalize_rut($rut);
-        mysqli_stmt_bind_param($stmt, 'ssssssssii', $rutNormalizado, $nombre, $fecha, $correo, $hash, $sexo, $telefono, $nuevoCertificado, $estado, $id);
+        mysqli_stmt_bind_param($stmt, 'ssssssii', $rutNormalizado, $nombre, $fecha, $correo, $sexo, $telefono, $estado, $id);
         $ok = mysqli_stmt_execute($stmt);
         $stmtError = mysqli_stmt_error($stmt);
         mysqli_stmt_close($stmt);
@@ -442,8 +420,8 @@ $usuarios = listar_usuarios($conn);
                                 <input type="email" name="correo" id="correo" class="form-control" value="<?= h($selected['correo']) ?>" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Contraseña <?= $selected['id'] ? '(dejar vacío para mantener)' : '' ?></label>
-                                <input type="password" name="password" id="password" class="form-control" <?= $selected['id'] ? '' : 'required' ?> >
+                                <label class="form-label">Contraseña <?= $selected['id'] ? '(no se modifica al editar)' : '' ?></label>
+                                <input type="password" name="password" id="password" class="form-control" <?= $selected['id'] ? 'disabled' : 'required' ?> >
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Sexo</label>
@@ -467,8 +445,8 @@ $usuarios = listar_usuarios($conn);
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Certificado de Antecedentes (PDF)</label>
-                                <input type="file" name="certificado" id="certificado" class="form-control" accept="application/pdf">
-                                <div class="form-text">Sólo PDF. Si edita sin subir uno nuevo, se conserva el actual.</div>
+                                <input type="file" name="certificado" id="certificado" class="form-control" accept="application/pdf" <?= $selected['id'] ? 'disabled' : 'required' ?>>
+                                <div class="form-text"><?= $selected['id'] ? 'En edición se mantiene el PDF actual sin permitir reemplazo.' : 'Sólo PDF. Debe adjuntarse al registrar.' ?></div>
                                 <?php if (!empty($selected['certificado_path'])): ?>
                                     <div class="mt-2 small">Archivo actual: <a href="../<?= h($selected['certificado_path']) ?>" target="_blank" rel="noopener"><?= h(basename($selected['certificado_path'])) ?></a></div>
                                 <?php endif; ?>
@@ -565,6 +543,8 @@ $usuarios = listar_usuarios($conn);
             document.getElementById('accionForm').value = 'insertar';
             document.getElementById('usuarioId').value = '';
             document.getElementById('currentCertificadoPath').value = '';
+            document.getElementById('password').disabled = false;
+            document.getElementById('certificado').disabled = false;
             document.getElementById('estadoFormulario').textContent = 'Nuevo registro';
             setFormMode('insertar');
         }
@@ -580,6 +560,9 @@ $usuarios = listar_usuarios($conn);
             document.getElementById('estado').value = String(usuario.estado ?? 1);
             document.getElementById('currentCertificadoPath').value = usuario.certificado_path || '';
             document.getElementById('password').value = '';
+            document.getElementById('password').disabled = true;
+            document.getElementById('certificado').value = '';
+            document.getElementById('certificado').disabled = true;
             document.getElementById('accionForm').value = 'modificar';
             document.getElementById('estadoFormulario').textContent = 'Editando ID ' + (usuario.id || '');
             setFormMode('modificar');
@@ -654,17 +637,16 @@ $usuarios = listar_usuarios($conn);
             fd.append('nombre', document.getElementById('nombre').value.trim());
             fd.append('fecha_nacimiento', document.getElementById('fecha_nacimiento').value);
             fd.append('correo', document.getElementById('correo').value.trim());
-            fd.append('password', document.getElementById('password').value.trim());
             fd.append('sexo', document.getElementById('sexo').value);
             fd.append('telefono', document.getElementById('telefono').value.trim());
             fd.append('estado', document.getElementById('estado').value);
+            const password = document.getElementById('password');
             const certificado = document.getElementById('certificado');
-            if (certificado && certificado.files && certificado.files[0]) {
-                fd.append('certificado', certificado.files[0]);
+            if (password && !password.disabled && password.value.trim()) {
+                fd.append('password', password.value.trim());
             }
-
-            if (accion === 'modificar' && !document.getElementById('password').value.trim()) {
-                fd.delete('password');
+            if (certificado && !certificado.disabled && certificado.files && certificado.files[0]) {
+                fd.append('certificado', certificado.files[0]);
             }
 
             fetch('listar_usuarios.php', { method: 'POST', body: fd, credentials: 'same-origin' })
