@@ -125,13 +125,41 @@ function obtener_usuario_por_id($conn, int $id): ?array {
 }
 
 function listar_usuarios($conn): array {
-    $sql = 'SELECT id, rut, nombre, fecha_nacimiento, correo, sexo, telefono, certificado_path, estado FROM usuarios ORDER BY id DESC';
-    $res = mysqli_query($conn, $sql);
+    $q = trim($_GET['q'] ?? '');
+    $sql = 'SELECT id, rut, nombre, fecha_nacimiento, correo, sexo, telefono, certificado_path, estado FROM usuarios';
+    $params = [];
+    $types = '';
+
+    if ($q !== '') {
+        $sql .= ' WHERE rut LIKE ? OR nombre LIKE ? OR correo LIKE ? OR telefono LIKE ? OR sexo LIKE ? OR CAST(id AS CHAR) LIKE ?';
+        for ($i = 0; $i < 6; $i++) {
+            $params[] = "%$q%";
+            $types .= 's';
+        }
+    }
+
+    $sql .= ' ORDER BY id DESC';
+
+    if ($q === '') {
+        $res = mysqli_query($conn, $sql);
+    } else {
+        $stmt = mysqli_prepare($conn, $sql);
+        if (!$stmt) {
+            return [];
+        }
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+        mysqli_stmt_execute($stmt);
+        $res = mysqli_stmt_get_result($stmt);
+    }
+
     $rows = [];
     if ($res) {
         while ($row = mysqli_fetch_assoc($res)) {
             $rows[] = $row;
         }
+    }
+    if (isset($stmt) && $stmt) {
+        mysqli_stmt_close($stmt);
     }
     return $rows;
 }

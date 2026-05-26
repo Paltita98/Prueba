@@ -7,6 +7,7 @@ if (!isset($_SESSION['id'])) { http_response_code(403); echo json_encode([]); ex
 $prov = trim($_GET['provincia'] ?? '');
 $com = trim($_GET['comuna'] ?? '');
 $sec = trim($_GET['sector'] ?? '');
+$q = trim($_GET['q'] ?? '');
 
 $where = [];
 $params = [];
@@ -23,6 +24,14 @@ if ($com !== '') {
 if ($sec !== '') {
     $where[] = "sector LIKE ?";
     $params[] = "%$sec%"; $types .= 's';
+}
+
+if ($q !== '') {
+    $where[] = "(tipo_propiedad LIKE ? OR descripcion LIKE ? OR provincia LIKE ? OR comuna LIKE ? OR sector LIKE ? OR CAST(id AS CHAR) LIKE ? OR CAST(precio_clp AS CHAR) LIKE ?)";
+    for ($i = 0; $i < 7; $i++) {
+        $params[] = "%$q%";
+        $types .= 's';
+    }
 }
 
 $sql = "SELECT id, tipo_propiedad, descripcion, banos, dormitorios, area_total, area_construida, precio_clp, precio_uf, fecha_publicacion, solicitar_visita, bodega, estacionamiento, logia, cocina_amoblada, antejardin, patio_trasero, piscina, foto_url, provincia, comuna, sector FROM propiedades";

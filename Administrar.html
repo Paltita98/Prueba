@@ -124,6 +124,13 @@
             border: 1px solid rgba(255,255,255,0.22);
             color: #fff;
         }
+
+        .search-panel {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 10px 24px rgba(67, 44, 29, 0.06);
+        }
     </style>
 </head>
 <body>
@@ -144,7 +151,7 @@
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                 <div>
                     <h1 class="h3 mb-2">Administrar usuarios y propiedades</h1>
-                    <p class="mb-0">Primero se cargan las propiedades de la base de datos y debajo el listado de usuarios.</p>
+                    <p class="mb-0">Listado de Propiedades y Usuarios.</p>
                 </div>
                 <div class="d-flex gap-2">
                     <span class="badge count-badge">Propiedades: <span id="countPropiedades">0</span></span>
@@ -160,6 +167,16 @@
                     <a class="btn btn-outline-secondary btn-sm" href="php/crud_propiedades.php">Abrir mantenedor</a>
                 </div>
                 <div class="card-body">
+                    <div class="row g-2 align-items-center mb-3">
+                        <div class="col-12 col-lg-8">
+                            <label for="buscadorPropiedades" class="form-label fw-semibold mb-1">Buscar propiedades</label>
+                            <input type="search" class="form-control" id="buscadorPropiedades" placeholder="Tipo, provincia, comuna, sector, ID o precio...">
+                        </div>
+                        <div class="col-12 col-lg-4 text-lg-end">
+                            <div class="small text-muted mb-2" id="estadoBusquedaPropiedades">Mostrando todas las propiedades.</div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="limpiarBusquedaPropiedades">Limpiar</button>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle mb-0">
                             <thead>
@@ -183,7 +200,17 @@
                 <div class="card-header">Usuarios registrados</div>
                 <div class="card-body">
                     <div class="mb-3 d-flex justify-content-end">
-                        <a class="btn btn-outline-secondary btn-sm" href="php/listar_usuarios.php">Abrir CRUD de usuarios</a>
+                        <a class="btn btn-outline-secondary btn-sm" href="php/listar_usuarios.php">Administrar usuarios</a>
+                    </div>
+                    <div class="row g-2 align-items-center mb-3">
+                        <div class="col-12 col-lg-8">
+                            <label for="buscadorUsuarios" class="form-label fw-semibold mb-1">Buscar usuarios</label>
+                            <input type="search" class="form-control" id="buscadorUsuarios" placeholder="RUT, nombre, correo, teléfono, sexo o ID...">
+                        </div>
+                        <div class="col-12 col-lg-4 text-lg-end">
+                            <div class="small text-muted mb-2" id="estadoBusquedaUsuarios">Mostrando todos los usuarios.</div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="limpiarBusquedaUsuarios">Limpiar</button>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle mb-0">
@@ -264,6 +291,10 @@
     <script>
         let adminAutenticado = false;
         let galeriaModalInstance = null;
+        let temporizadorBusquedaPropiedades = null;
+        let temporizadorBusquedaUsuarios = null;
+        let filtroPropiedadesActual = '';
+        let filtroUsuariosActual = '';
 
         function getGaleriaModal() {
             if (!galeriaModalInstance) {
@@ -369,7 +400,38 @@
             return numero.toLocaleString('es-CL');
         }
 
-        function renderPropiedades(items) {
+        function escaparHtml(valor) {
+            return String(valor ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function escaparRegex(valor) {
+            return String(valor ?? '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function resaltarTexto(valor, filtro) {
+            const texto = escaparHtml(valor);
+            const termino = String(filtro || '').trim();
+            if (!termino) {
+                return texto;
+            }
+
+            const patron = new RegExp(`(${escaparRegex(termino)})`, 'ig');
+            return texto.replace(patron, '<mark class="px-1 rounded bg-warning-subtle">$1</mark>');
+        }
+
+        function actualizarEstadoBusqueda(id, texto) {
+            const estado = document.getElementById(id);
+            if (estado) {
+                estado.textContent = texto;
+            }
+        }
+
+        function renderPropiedades(items, filtro = '') {
             const tbody = document.getElementById('tablaPropiedades');
             tbody.innerHTML = '';
             document.getElementById('countPropiedades').textContent = items.length;
@@ -382,15 +444,15 @@
             items.forEach((item) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${item.id ?? ''}</td>
-                    <td>${item.tipo_propiedad ?? ''}</td>
-                    <td>${item.provincia ?? ''}</td>
-                    <td>${item.comuna ?? ''}</td>
-                    <td>${item.sector ?? ''}</td>
+                    <td>${escaparHtml(item.id ?? '')}</td>
+                    <td>${resaltarTexto(item.tipo_propiedad ?? '', filtro)}</td>
+                    <td>${resaltarTexto(item.provincia ?? '', filtro)}</td>
+                    <td>${resaltarTexto(item.comuna ?? '', filtro)}</td>
+                    <td>${resaltarTexto(item.sector ?? '', filtro)}</td>
                     <td>$${formatearNumero(item.precio_clp)}</td>
                     <td>
-                        <button type="button" class="gallery-trigger" data-prop-id="${Number(item.id || 0)}" data-prop-title="${String(`${item.tipo_propiedad ?? ''} - ${item.provincia ?? ''} / ${item.comuna ?? ''}`).replace(/"/g, '&quot;')}">
-                            <img class="thumb" src="uploads/properties/${item.foto_url || 'casa1.webp'}" alt="Foto propiedad" title="Ver galería">
+                        <button type="button" class="gallery-trigger" data-prop-id="${Number(item.id || 0)}" data-prop-title="${escaparHtml(`${item.tipo_propiedad ?? ''} - ${item.provincia ?? ''} / ${item.comuna ?? ''}`)}">
+                            <img class="thumb" src="uploads/properties/${escaparHtml(item.foto_url || 'casa1.webp')}" alt="Foto propiedad" title="Ver galería">
                             <span class="gallery-label">Ver más...</span>
                         </button>
                     </td>
@@ -399,7 +461,7 @@
             });
         }
 
-        function renderUsuarios(items) {
+        function renderUsuarios(items, filtro = '') {
             const tbody = document.getElementById('tablaUsuarios');
             tbody.innerHTML = '';
             document.getElementById('countUsuarios').textContent = items.length;
@@ -413,30 +475,80 @@
                 const estado = Number(item.estado) === 1 ? 'Activo' : 'Inactivo';
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${item.id ?? ''}</td>
-                    <td>${item.rut ?? ''}</td>
-                    <td>${item.nombre ?? ''}</td>
-                    <td>${item.correo ?? ''}</td>
-                    <td>${item.sexo ?? ''}</td>
-                    <td>${item.telefono ?? ''}</td>
-                    <td>${estado}</td>
+                    <td>${escaparHtml(item.id ?? '')}</td>
+                    <td>${resaltarTexto(item.rut ?? '', filtro)}</td>
+                    <td>${resaltarTexto(item.nombre ?? '', filtro)}</td>
+                    <td>${resaltarTexto(item.correo ?? '', filtro)}</td>
+                    <td>${resaltarTexto(item.sexo ?? '', filtro)}</td>
+                    <td>${resaltarTexto(item.telefono ?? '', filtro)}</td>
+                    <td>${escaparHtml(estado)}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function cargarDatos() {
-            Promise.all([
-                fetch('php/search_propiedades.php', { credentials: 'same-origin' }).then((response) => response.json()),
-                fetch('php/listar_usuarios.php?format=json', { credentials: 'same-origin' }).then((response) => response.json())
-            ])
-                .then(([propiedades, usuarios]) => {
-                    renderPropiedades(Array.isArray(propiedades) ? propiedades : []);
-                    renderUsuarios(Array.isArray(usuarios) ? usuarios : []);
+        function cargarPropiedades(filtro = '') {
+            const q = String(filtro || '').trim();
+            filtroPropiedadesActual = q;
+            const paramsPropiedades = new URLSearchParams();
+
+            if (q) {
+                paramsPropiedades.set('q', q);
+            }
+
+            const urlPropiedades = `php/search_propiedades.php?${paramsPropiedades.toString()}`;
+
+            return fetch(urlPropiedades, { credentials: 'same-origin' })
+                .then((response) => response.json())
+                .then((propiedades) => {
+                    renderPropiedades(Array.isArray(propiedades) ? propiedades : [], q);
+                    actualizarEstadoBusqueda('estadoBusquedaPropiedades', q ? `Filtro activo: "${q}"` : 'Mostrando todas las propiedades.');
                 })
                 .catch(() => {
-                    Swal.fire('Error', 'No se pudieron cargar las tablas.', 'error');
+                    Swal.fire('Error', 'No se pudieron cargar las propiedades.', 'error');
                 });
+        }
+
+        function cargarUsuarios(filtro = '') {
+            const q = String(filtro || '').trim();
+            filtroUsuariosActual = q;
+            const paramsUsuarios = new URLSearchParams({ format: 'json' });
+
+            if (q) {
+                paramsUsuarios.set('q', q);
+            }
+
+            const urlUsuarios = `php/listar_usuarios.php?${paramsUsuarios.toString()}`;
+
+            return fetch(urlUsuarios, { credentials: 'same-origin' })
+                .then((response) => response.json())
+                .then((usuarios) => {
+                    renderUsuarios(Array.isArray(usuarios) ? usuarios : [], q);
+                    actualizarEstadoBusqueda('estadoBusquedaUsuarios', q ? `Filtro activo: "${q}"` : 'Mostrando todos los usuarios.');
+                })
+                .catch(() => {
+                    Swal.fire('Error', 'No se pudieron cargar los usuarios.', 'error');
+                });
+        }
+
+        function buscarPropiedades() {
+            const valor = document.getElementById('buscadorPropiedades')?.value || '';
+            window.clearTimeout(temporizadorBusquedaPropiedades);
+            temporizadorBusquedaPropiedades = window.setTimeout(() => {
+                if (adminAutenticado) {
+                    cargarPropiedades(valor);
+                }
+            }, 250);
+        }
+
+        function buscarUsuarios() {
+            const valor = document.getElementById('buscadorUsuarios')?.value || '';
+            window.clearTimeout(temporizadorBusquedaUsuarios);
+            temporizadorBusquedaUsuarios = window.setTimeout(() => {
+                if (adminAutenticado) {
+                    cargarUsuarios(valor);
+                }
+            }, 250);
         }
 
         document.getElementById('tablaPropiedades').addEventListener('click', (event) => {
@@ -449,12 +561,33 @@
             }
         });
 
+        document.getElementById('buscadorPropiedades').addEventListener('input', buscarPropiedades);
+        document.getElementById('limpiarBusquedaPropiedades').addEventListener('click', () => {
+            const input = document.getElementById('buscadorPropiedades');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+            buscarPropiedades();
+        });
+
+        document.getElementById('buscadorUsuarios').addEventListener('input', buscarUsuarios);
+        document.getElementById('limpiarBusquedaUsuarios').addEventListener('click', () => {
+            const input = document.getElementById('buscadorUsuarios');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+            buscarUsuarios();
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const tieneAcceso = localStorage.getItem('pnkAdminAccess') === 'true' || localStorage.getItem('pnkRolActivo') === 'admin';
             if (tieneAcceso) {
                 adminAutenticado = true;
                 mostrarContenido();
-                cargarDatos();
+                cargarPropiedades();
+                cargarUsuarios();
                 return;
             }
 
