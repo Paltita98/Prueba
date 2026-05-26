@@ -6,6 +6,15 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 // Validar sesión activa
 if (!isset($_SESSION['id'])) { header("Location: login.html"); exit; }
 
+function property_photo_src(?string $filename): string {
+    $clean = trim((string) $filename);
+    if ($clean === '' || $clean === 'cargando.jpg') {
+        return '../img/cargando.jpg';
+    }
+
+    return '../uploads/properties/' . basename($clean);
+}
+
 // CSRF token para operaciones sensibles
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
@@ -59,7 +68,7 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                     <td><?= htmlspecialchars($p['area_total'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td>
                         <button type="button" class="btn p-0 border-0 bg-transparent" onclick="abrirGaleria(<?= (int)$p['id'] ?>, <?= json_encode($p['tipo_propiedad'] . ' - ' . $p['provincia'] . ' / ' . $p['comuna']) ?>)">
-                            <img src="../uploads/properties/<?= htmlspecialchars($p['foto_url'] ?: 'casa1.webp', ENT_QUOTES, 'UTF-8') ?>" alt="Foto propiedad" title="Ver galería" style="width:72px;height:48px;object-fit:cover;border-radius:6px;cursor:pointer;">
+                            <img src="<?= htmlspecialchars(property_photo_src($p['foto_url'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" alt="Foto propiedad" title="Ver galería" style="width:72px;height:48px;object-fit:cover;border-radius:6px;cursor:pointer;">
                         </button>
                     </td>
                     <td>$<?= number_format((int)$p['precio_clp']) ?></td>
@@ -201,7 +210,7 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                         <div class="col-12">
                             <label class="form-label">Fotografías (1 a 10)</label>
                             <input type="file" name="fotos[]" id="propFotos" class="form-control" accept="image/*" multiple>
-                            <input type="hidden" name="current_foto_url" id="propCurrentFoto" value="casa1.webp">
+                            <input type="hidden" name="current_foto_url" id="propCurrentFoto" value="cargando.jpg">
                             <small class="text-muted d-block mt-1">Si editas una propiedad y no subes nuevas imágenes, se conserva la principal actual.</small>
                         </div>
                     </div>
@@ -340,7 +349,7 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                     document.getElementById('propAnteJ').value = p.antejardin || 'No';
                     document.getElementById('propPatio').value = p.patio_trasero || 'No';
                     document.getElementById('propPiscina').value = p.piscina || 'No';
-                document.getElementById('propCurrentFoto').value = p.foto_url || 'casa1.webp';
+                document.getElementById('propCurrentFoto').value = p.foto_url || 'cargando.jpg';
                 const modal = new bootstrap.Modal(document.getElementById('modalPropiedad'));
                 modal.show();
             } catch (e) { console.error(e); }
@@ -416,7 +425,7 @@ $res = mysqli_query($conn, "SELECT * FROM propiedades");
                         document.getElementById('propAnteJ').value = item.antejardin || 'No';
                         document.getElementById('propPatio').value = item.patio_trasero || 'No';
                         document.getElementById('propPiscina').value = item.piscina || 'No';
-                        document.getElementById('propCurrentFoto').value = item.foto_url || 'casa1.webp';
+                        document.getElementById('propCurrentFoto').value = item.foto_url || 'cargando.jpg';
                         const modal = new bootstrap.Modal(document.getElementById('modalPropiedad'));
                         modal.show();
                     });

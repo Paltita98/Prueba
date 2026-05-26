@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS propiedades (
     patio_trasero VARCHAR(5) NOT NULL DEFAULT 'No',
     piscina VARCHAR(5) NOT NULL DEFAULT 'No',
 
-    foto_url VARCHAR(255) NOT NULL DEFAULT 'casa1.webp',
+    foto_url VARCHAR(255) NOT NULL DEFAULT 'cargando.jpg',
     provincia VARCHAR(50) NOT NULL,
     comuna VARCHAR(50) NOT NULL,
     sector VARCHAR(50) NOT NULL

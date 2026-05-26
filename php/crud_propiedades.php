@@ -152,10 +152,20 @@ function upload_property_photos(array $files): array {
     return $uploadedFiles;
 }
 
+function get_property_photo_src(?string $filename, bool $useParentPath = false): string {
+    $clean = trim((string) $filename);
+    if ($clean === '' || $clean === 'cargando.jpg') {
+        return $useParentPath ? '../img/cargando.jpg' : 'img/cargando.jpg';
+    }
+
+    $basePath = $useParentPath ? '../uploads/properties/' : 'uploads/properties/';
+    return $basePath . basename($clean);
+}
+
 function delete_property_files(array $filenames): void {
     $uploadDir = __DIR__ . '/../uploads/properties';
     foreach (array_unique($filenames) as $filename) {
-        if (!$filename || $filename === 'casa1.webp') continue;
+        if (!$filename || $filename === 'casa1.webp' || $filename === 'cargando.jpg') continue;
         $path = $uploadDir . '/' . basename($filename);
         if (is_file($path)) { @unlink($path); }
     }
@@ -206,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
         'area_total' => '', 'area_construida' => '', 'precio_clp' => '', 'precio_uf' => '',
         'fecha_publicacion' => '', 'solicitar_visita' => 'No', 'bodega' => 'No', 'estacionamiento' => '',
         'logia' => '', 'cocina_amoblada' => '', 'antejardin' => '', 'patio_trasero' => '', 'piscina' => '',
-        'foto_url' => 'casa1.webp', 'provincia' => '', 'comuna' => '', 'sector' => ''
+        'foto_url' => 'cargando.jpg', 'provincia' => '', 'comuna' => '', 'sector' => ''
     ];
     if ($selectedId > 0) {
         $stmtSelected = mysqli_prepare($conn, 'SELECT id, tipo_propiedad, descripcion, banos, dormitorios, area_total, area_construida, precio_clp, precio_uf, fecha_publicacion, solicitar_visita, bodega, estacionamiento, logia, cocina_amoblada, antejardin, patio_trasero, piscina, foto_url, provincia, comuna, sector FROM propiedades WHERE id = ? LIMIT 1');
@@ -268,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
                             <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf_token']) ?>">
                             <input type="hidden" name="accion" id="accionForm" value="<?= $selected['id'] ? 'modificar' : 'insertar' ?>">
                             <input type="hidden" name="id" id="propiedadId" value="<?= h($selected['id']) ?>">
-                            <input type="hidden" name="current_foto_url" id="currentFotoUrl" value="<?= h($selected['foto_url'] ?: 'casa1.webp') ?>">
+                            <input type="hidden" name="current_foto_url" id="currentFotoUrl" value="<?= h($selected['foto_url'] ?: 'cargando.jpg') ?>">
 
                             <div class="col-12">
                                 <label class="form-label">Tipo de propiedad</label>
@@ -341,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
                                             <td><?= h($propiedad['area_total']) ?></td>
                                             <td>
                                                 <button type="button" class="btn p-0 border-0 bg-transparent" onclick="abrirGaleria(<?= (int)$propiedad['id'] ?>, <?= json_encode(h($propiedad['tipo_propiedad'] . ' - ' . $propiedad['provincia'] . ' / ' . $propiedad['comuna'])) ?>)">
-                                                    <img class="prop-thumb" src="../uploads/properties/<?= h($propiedad['foto_url'] ?: 'casa1.webp') ?>" alt="Foto" title="Ver galería">
+                                                    <img class="prop-thumb" src="<?= h(get_property_photo_src($propiedad['foto_url'], true)) ?>" alt="Foto" title="Ver galería">
                                                 </button>
                                             </td>
                                             <td>$<?= number_format((float)$propiedad['precio_clp'], 0, ',', '.') ?></td>
@@ -462,7 +472,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
             // Valores hidden y estado visual
             document.getElementById('accionForm').value = 'insertar';
             document.getElementById('propiedadId').value = '';
-            document.getElementById('currentFotoUrl').value = 'casa1.webp';
+            document.getElementById('currentFotoUrl').value = 'cargando.jpg';
             document.getElementById('estadoFormulario').textContent = 'Nuevo registro';
             document.getElementById('precioUf').value = '';
             setFormMode('insertar');
@@ -490,7 +500,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
             form.querySelector('[name="patio_trasero"]').value = propiedad.patio_trasero === 'Sí' ? 'Sí' : (propiedad.patio_trasero === 'No' ? 'No' : (propiedad.patio_trasero || ''));
             form.querySelector('[name="piscina"]').value = propiedad.piscina === 'Sí' ? 'Sí' : (propiedad.piscina === 'No' ? 'No' : (propiedad.piscina || ''));
             document.getElementById('propiedadId').value = propiedad.id || '';
-            document.getElementById('currentFotoUrl').value = propiedad.foto_url || 'casa1.webp';
+            document.getElementById('currentFotoUrl').value = propiedad.foto_url || 'cargando.jpg';
             document.getElementById('accionForm').value = 'modificar';
             document.getElementById('estadoFormulario').textContent = 'Editando ID ' + (propiedad.id || '');
             setFormMode('modificar');
@@ -614,7 +624,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['accion'])) {
 
                 inner.innerHTML = '';
                 data.imagenes.forEach((filename, index) => {
-                    inner.appendChild(crearSlideImagen(`../uploads/properties/${filename}`, index === 0));
+                    inner.appendChild(crearSlideImagen(filename === 'cargando.jpg' ? '../img/cargando.jpg' : `../uploads/properties/${filename}`, index === 0));
                 });
             } catch (error) {
                 inner.innerHTML = `<div class="alert alert-danger mb-0">${error.message || 'No se pudo cargar la galería.'}</div>`;
@@ -654,8 +664,8 @@ if ($accion === 'insertar') {
 
     $uploadedPhotos = upload_property_photos(normalize_upload_files($_FILES['fotos'] ?? []));
     
-    // Si no sube fotos, se le asigna la fotografía por defecto exigida por la pauta
-    $foto_url = 'casa1.webp';
+    // Si no sube fotos, se asigna la imagen de carga
+    $foto_url = 'cargando.jpg';
     if (count($uploadedPhotos) > 0) {
         $foto_url = $uploadedPhotos[0];
     }
@@ -761,7 +771,7 @@ if ($accion === 'modificar') {
     $provincia = trim($_POST['provincia'] ?? '');
     $comuna = trim($_POST['comuna'] ?? '');
     $sector = trim($_POST['sector'] ?? '');
-    $currentPhoto = trim($_POST['current_foto_url'] ?? 'casa1.webp');
+    $currentPhoto = trim($_POST['current_foto_url'] ?? 'cargando.jpg');
 
     $uploadedPhotos = upload_property_photos(normalize_upload_files($_FILES['fotos'] ?? []));
     if (count($uploadedPhotos) > 10) {
@@ -827,7 +837,7 @@ if ($accion === 'subirFoto') {
 
     $uploadedPhotos = upload_property_photos(normalize_upload_files($_FILES['fotos'] ?? []));
     if (empty($uploadedPhotos)) {
-        $foto_url = 'casa1.webp';
+        $foto_url = 'cargando.jpg';
     } else {
         $foto_url = $uploadedPhotos[0];
     }

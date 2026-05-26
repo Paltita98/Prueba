@@ -333,7 +333,7 @@
 
                 inner.innerHTML = '';
                 data.imagenes.forEach((filename, index) => {
-                    inner.appendChild(crearSlideImagen(`uploads/properties/${filename}`, index === 0));
+                    inner.appendChild(crearSlideImagen(filename === 'cargando.jpg' ? 'img/cargando.jpg' : `uploads/properties/${filename}`, index === 0));
                 });
             } catch (error) {
                 inner.innerHTML = `<div class="alert alert-danger mb-0">${error.message || 'No se pudo cargar la galería.'}</div>`;
@@ -424,6 +424,14 @@
             return texto.replace(patron, '<mark class="px-1 rounded bg-warning-subtle">$1</mark>');
         }
 
+        function obtenerRutaFotoAdmin(filename) {
+            const limpio = String(filename || '').trim();
+            if (!limpio || limpio === 'cargando.jpg') {
+                return 'img/cargando.jpg';
+            }
+            return `uploads/properties/${escaparHtml(limpio)}`;
+        }
+
         function actualizarEstadoBusqueda(id, texto) {
             const estado = document.getElementById(id);
             if (estado) {
@@ -452,7 +460,7 @@
                     <td>$${formatearNumero(item.precio_clp)}</td>
                     <td>
                         <button type="button" class="gallery-trigger" data-prop-id="${Number(item.id || 0)}" data-prop-title="${escaparHtml(`${item.tipo_propiedad ?? ''} - ${item.provincia ?? ''} / ${item.comuna ?? ''}`)}">
-                            <img class="thumb" src="uploads/properties/${escaparHtml(item.foto_url || 'casa1.webp')}" alt="Foto propiedad" title="Ver galería">
+                            <img class="thumb" src="${obtenerRutaFotoAdmin(item.foto_url)}" alt="Foto propiedad" title="Ver galería">
                             <span class="gallery-label">Ver más...</span>
                         </button>
                     </td>
